@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "940672739087",
+    "project_id": "paylut-zalel",
+    "storage_bucket": "paylut-zalel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940672739087:android:f4c2e02d649810794c807a",
+        "android_client_info": {
+          "package_name": "com.zalelstudios.paylut"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940672739087-g3hnrdhg1700v2v8c3oor1c6abdv3fnp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zalelstudios.paylut",
+            "certificate_hash": "42e87257fd1ce7a2cfd33bd5a2c31362800abb4e"
+          }
+        },
+        {
+          "client_id": "940672739087-9ijs20n5v48u8eg6fbvs6iea7f3jaaqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLDDprKlNPmVqv3IJsbCtPAX_pjNU28yY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940672739087-9ijs20n5v48u8eg6fbvs6iea7f3jaaqv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
