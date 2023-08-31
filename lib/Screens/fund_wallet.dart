@@ -45,7 +45,6 @@ class _FundWalletState extends State<FundWallet> {
     //formatting and setting transaction reference
     String ref = "ref_${DateTime.now()}";
     ref = ref.replaceAll(' ', '');
-    ref = ref.replaceAll('_', '');
     ref = ref.replaceAll('-', '');
     ref = ref.replaceAll(':', '');
     ref = ref.replaceAll('.', '');

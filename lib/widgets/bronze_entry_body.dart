@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +43,7 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
   DateTime now = DateTime.now();
   int vaultAmount = 1000000;
   double multiplier = 1;
+  bool makingEntry = false;
 
   TextEditingController amountController = TextEditingController();
   Animation? animation;
@@ -276,7 +276,6 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
       }
     }
 
-
     //add user input amount to amount in vault
 
     DocumentSnapshot resultSnapshot = await FirebaseFirestore.instance
@@ -284,15 +283,15 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
         .doc('bronze')
         .collection('dailyEntries')
         .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
-    .get();
+        .get();
     int vAmount = resultSnapshot.get('vaultAmount');
 
     await FirebaseFirestore.instance
-    .collection('vaults')
-    .doc('bronze')
-    .collection('dailyEntries')
-    .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
-    .update({'vaultAmount' : vAmount + amount});
+        .collection('vaults')
+        .doc('bronze')
+        .collection('dailyEntries')
+        .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
+        .update({'vaultAmount': vAmount + amount});
   }
 
   //function to charge wallet
@@ -316,7 +315,6 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
     //formatting and setting transaction reference
     String ref = "ref_$now";
     ref = ref.replaceAll(' ', '');
-    ref = ref.replaceAll('_', '');
     ref = ref.replaceAll('-', '');
     ref = ref.replaceAll(':', '');
     ref = ref.replaceAll('.', '');
@@ -345,16 +343,19 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
 
   //function to charge wallet and record transaction and entries in history
   Future<void> chargeWalletAndRecordVaultEntry() async {
+
     DocumentSnapshot userData =
         await FirebaseFirestore.instance.collection('users').doc(userDetails.uid).get();
     int walletBalance = userData.get('walletBalance');
 
     //checking wallet balance before charging wallet
     if (walletBalance >= amount) {
+
       //charging wallet
       await chargeWallet(amount);
       //recording vault entries
       await recordVaultEntries();
+
     } else {
       int difference = amount - walletBalance;
       // ignore: use_build_context_synchronously
@@ -362,20 +363,20 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              backgroundColor: Colors.redAccent,
+              //backgroundColor: Colors.redAccent,
               title: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.cancel_rounded,
-                    color: Colors.white,
+                    color: Colors.red,
                   ),
                   SizedBox(
                     width: 4,
                   ),
                   Text(
                     'Error',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.red),
                   ),
                 ],
               ),
@@ -387,7 +388,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
                       children: [
                         Text(
                           'Insufficient balance, you need NGN$difference to complete transaction',
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(),
+                          textAlign: TextAlign.center,
                         )
                       ])),
             );
@@ -396,8 +398,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
   }
 
   void calculateMultiplier() {}
-  
-  Future<void> getVaultAmount() async{
+
+  Future<void> getVaultAmount() async {
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('vaults')
         .doc('bronze')
@@ -406,7 +408,7 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
         .get();
 
     vaultAmount = snapshot.get('vaultAmount');
-    if(mounted){
+    if (mounted) {
       setState(() {});
     }
   }
@@ -769,7 +771,6 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
                                       ),
                                     ],
                                   ),
-
                                   const Text(
                                     "amount in vault",
                                     style: TextStyle(color: Colors.white, fontSize: 10),

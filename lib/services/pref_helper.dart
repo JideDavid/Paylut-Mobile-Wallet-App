@@ -16,4 +16,18 @@ class PrefHelper{
     }
   }
 
+  void setLastWalletAction(int value) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('walletAction', value);
+  }
+
+  Future<int?> getLastWalletAction() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getInt('walletAction') == null ){
+      return 1;
+    }else{
+      return prefs.getInt('walletAction');
+    }
+  }
+
 }
