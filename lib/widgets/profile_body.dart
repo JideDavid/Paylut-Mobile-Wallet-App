@@ -20,6 +20,7 @@ class _ProfileBodyState extends State<ProfileBody> {
   _ProfileBodyState({required this.userDetails});
 
   String createdAgo = '';
+  bool pressed = false;
 
   getDate(){
     createdAgo = GetTimeAgo.parse((userDetails.date).toDate());
@@ -73,13 +74,31 @@ class _ProfileBodyState extends State<ProfileBody> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 30),
             child: GestureDetector(
-                onTap: (){
-                  GoogleSignIn googleSignIn = GoogleSignIn();
-                  googleSignIn.signOut();
+              onTapDown: (tapDetails){
+                setState(() {
+                  pressed = true;
+                });
+              },
+                onTapUp: (tapDetails){
+
+                  setState(() {
+                    pressed = false;
+                  });
+                  //GoogleSignIn googleSignIn = GoogleSignIn();
+                  GoogleSignIn().signOut();
                   FirebaseAuth.instance.signOut();
                   Navigator.pushReplacementNamed(context, '/authScreen');
                 },
-                child: const Text('Log out')),
+                child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.red),
+                      borderRadius: BorderRadius.circular(20),
+                      color: pressed ? Colors.red.withOpacity(0.2) : null,
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 36, vertical: 8),
+                      child: Text('Log out'),
+                    ))),
           ),
         ],
       ),

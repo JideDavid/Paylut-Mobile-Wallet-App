@@ -6,6 +6,9 @@ import 'package:paylut/Screens/receipt.dart';
 import 'package:paylut/models/transaction_fund_wallet.dart';
 import 'package:paylut/models/user_model.dart';
 
+import 'funding_receipt.dart';
+import 'game_receipt.dart';
+
 class WalletFundHistory extends StatefulWidget {
   final UserDetails userDetails;
   const WalletFundHistory({super.key, required this.userDetails});
@@ -19,9 +22,13 @@ class _WalletFundHistoryState extends State<WalletFundHistory> {
   UserDetails userDetails;
   _WalletFundHistoryState({required this.userDetails});
 
+  var f = NumberFormat("##,###,###", "en_US");
+
   List<TransactionHistoryModel> transactionHistory = [];
   bool isLoading = true;
   bool hasData = true;
+
+
   TextStyle heading = const TextStyle(
     fontWeight: FontWeight.bold,
   );
@@ -29,9 +36,6 @@ class _WalletFundHistoryState extends State<WalletFundHistory> {
     fontWeight: FontWeight.normal,
     fontSize: 12,
   );
-  TextStyle sectionHeading =
-      const TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.deepPurple);
-
   Future<void> getFundHistory() async {
     await FirebaseFirestore.instance
         .collection('users')
@@ -59,6 +63,10 @@ class _WalletFundHistoryState extends State<WalletFundHistory> {
       }
     });
   }
+
+  TextStyle sectionHeading =
+      const TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.deepPurple);
+
 
   @override
   void initState() {
@@ -112,21 +120,43 @@ class _WalletFundHistoryState extends State<WalletFundHistory> {
                             Navigator.push(context, MaterialPageRoute(builder: (context)
                             {
                               return Receipt(userDetails: userDetails,
-                                  transactionRef: transactionHistory[index].transactionRef);
+                                  transactionRef: transactionHistory[index].transactionRef,
+                              newTransaction: false,
+                              );
                             }
                             ));
                           }
-                          : (){print('type not transfer');},
+                          : transactionHistory[index].type == 'game' ? (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)
+                            {
+                              return GameReceipt(userDetails: userDetails,
+                                transactionRef: transactionHistory[index].transactionRef,
+                                newTransaction: false,
+                              );
+                            }
+                            ));
+                          }
+                          : (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)
+                            {
+                              return FundingReceipt(userDetails: userDetails,
+                                transactionRef: transactionHistory[index].transactionRef,
+                                newTransaction: false,
+                              );
+                            }
+                            ));
+                          },
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: Container(
                                 width: double.infinity,
-                                color: transactionHistory[index].isCredit ? Colors.green.withOpacity(0.1)
-                                : Colors.red.withOpacity(0.1),
+                                color: index.isEven ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.1),
+                                //transactionHistory[index].isCredit ? Colors.grey.withOpacity(0.2)
+                                //: Colors.grey.withOpacity(0.2),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -140,7 +170,7 @@ class _WalletFundHistoryState extends State<WalletFundHistory> {
                                                 color: Colors.grey,
                                               ),
                                               Text(
-                                                '${transactionHistory[index].amount}.00',
+                                                f.format(transactionHistory[index].amount),
                                                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                                               ),
                                             ],
@@ -149,7 +179,9 @@ class _WalletFundHistoryState extends State<WalletFundHistory> {
                                             children: [
                                               Text(
                                                 transactionHistory[index].type,
-                                                style: const TextStyle(fontSize: 20,),
+                                                style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold),
                                               ),
                                             ],
                                           ),

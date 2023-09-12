@@ -4,36 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:paylut/models/user_model.dart';
 
-class Receipt extends StatefulWidget {
+class FundingReceipt extends StatefulWidget {
   final UserDetails userDetails;
   final String transactionRef;
   final bool newTransaction;
-  const Receipt({super.key, required this.userDetails, required this.transactionRef, required this.newTransaction});
+  const FundingReceipt({super.key, required this.userDetails, required this.transactionRef, required this.newTransaction});
 
   @override
-  State<Receipt> createState() =>
+  State<FundingReceipt> createState() =>
       // ignore: no_logic_in_create_state
-      _ReceiptState(userDetails: userDetails, transactionRef: transactionRef, newTransaction: newTransaction);
+      _FundingReceiptState(userDetails: userDetails, transactionRef: transactionRef, newTransaction: newTransaction);
 }
 
-class _ReceiptState extends State<Receipt> {
+class _FundingReceiptState extends State<FundingReceipt> {
   UserDetails userDetails;
   String transactionRef;
   bool newTransaction;
-  _ReceiptState({required this.userDetails, required this.transactionRef, required this.newTransaction});
+  _FundingReceiptState({required this.userDetails, required this.transactionRef, required this.newTransaction});
 
   var f = NumberFormat("##,###,###", "en_US");
 
   int amount = 0;
   Timestamp date = Timestamp.now();
   int initialBalance = 0;
+  bool isCredit = false;
+  String method = '';
   int newBalance = 0;
   String ref = '';
   String type = '';
-  String userTag = '';
-  String username = '';
   bool isLoading = false;
-  bool isCredit = false;
 
   TextStyle heading = const TextStyle(
     fontWeight: FontWeight.bold,
@@ -58,17 +57,16 @@ class _ReceiptState extends State<Receipt> {
 
     amount = rSnapshot.get('amount');
     date = rSnapshot.get('date');
+    method = rSnapshot.get('method');
     initialBalance = rSnapshot.get('initialBalance');
+    isCredit = rSnapshot.get('isCredit');
     newBalance = rSnapshot.get('newBalance');
     ref = rSnapshot.get('transactionRef');
     type = rSnapshot.get('type');
-    userTag = rSnapshot.get('userTag');
-    username = rSnapshot.get('username');
-    isCredit = rSnapshot.get('isCredit');
 
     if (kDebugMode) {
       print(
-          '$amount, $date, $initialBalance, $newBalance, $ref, $type, $userTag, $username, $isCredit');
+          '$amount, $date, $method, $initialBalance, $newBalance, $ref, $type, $isCredit');
     }
 
     isLoading = false;
@@ -136,7 +134,7 @@ class _ReceiptState extends State<Receipt> {
                         color: isLoading ? Colors.grey : (isCredit ? Colors.green : Colors.red),
                       ),
                       Text(
-                        f.format(amount).toString(),
+                        f.format(amount),
                         style: TextStyle(
                             fontSize: 30,
                             color:
@@ -168,27 +166,12 @@ class _ReceiptState extends State<Receipt> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          isCredit ? 'From user' : 'To user',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        Text(
-                          username.toString(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
                         const Text(
-                          'User Tag',
+                          'method',
                           style: TextStyle(color: Colors.grey),
                         ),
                         Text(
-                          userTag.toString(),
+                          method,
                         ),
                       ],
                     ),
@@ -229,7 +212,7 @@ class _ReceiptState extends State<Receipt> {
                           'Transaction type',
                           style: TextStyle(color: Colors.grey),
                         ),
-                        Text('Transfer'),
+                        Text('Wallet Funding'),
                       ],
                     ),
                   ),

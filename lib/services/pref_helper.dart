@@ -30,4 +30,19 @@ class PrefHelper{
     }
   }
 
+  void setAppIsFresh(bool value) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFresh', value);
+  }
+
+  Future<bool?> getAppIsFresh() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getBool('isFresh') == null ){
+      return true;
+    }else{
+      return prefs.getBool('isFresh');
+    }
+
+  }
+
 }

@@ -2,12 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:paylut/Screens/auth_screen.dart';
 import 'package:paylut/Screens/home_screen.dart';
+import 'package:paylut/Screens/onboarding.dart';
+import 'package:paylut/services/pref_helper.dart';
 import 'models/user_model.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp
+  ]);
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -20,6 +26,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  bool appFresh = true;
 
   //Checking if a user is already signed in
   Future<Widget> userSignedIn() async{
@@ -52,9 +60,17 @@ class _MyAppState extends State<MyApp> {
     return MaterialColor(color.value, swatch);
   }
 
+  Future<void> getAppFresh() async{
+    appFresh = (await PrefHelper().getAppIsFresh())!;
+    if(mounted){
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    getAppFresh();
   }
 
   @override
@@ -90,8 +106,13 @@ class _MyAppState extends State<MyApp> {
         appBarTheme: const AppBarTheme(elevation: 0, titleTextStyle: TextStyle(fontSize: 15)),
         floatingActionButtonTheme:
             const FloatingActionButtonThemeData(backgroundColor: Colors.deepPurple),
+        colorScheme: const ColorScheme.dark(
+          background: Colors.black,
+
+        )
       ),
-      home: FutureBuilder(
+      home: appFresh ? const OnBoarding()
+      : FutureBuilder(
         builder: (context, AsyncSnapshot<Widget> snapshot) {
           if(snapshot.hasData){
             return snapshot.data!;

@@ -156,17 +156,17 @@ class _TransferState extends State<Transfer> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          Receipt(userDetails: userDetails, transactionRef: transactionRef)));
+                          Receipt(userDetails: userDetails, transactionRef: transactionRef, newTransaction: true,)));
             });
 
             return AlertDialog(
-              backgroundColor: Colors.green,
+              //backgroundColor: Colors.green,
               title: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'Transaction Successful',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.green),
                   ),
                 ],
               ),
@@ -178,15 +178,15 @@ class _TransferState extends State<Transfer> {
                       children: [
                         const Icon(
                           Icons.check_circle,
-                          color: Colors.white,
+                          color: Colors.green,
                           size: 50,
                         ),
                         const SizedBox(
                           height: 16,
                         ),
                         Text(
-                          'You have successfully transfer a sum of ${amount}NGN to ${contacts[0].name}',
-                          style: const TextStyle(color: Colors.white),
+                          'You have successfully transfer a sum of ${amount}NGN to ${tagUsers[0].name}',
+                          style: const TextStyle(),
                           textAlign: TextAlign.center,
                         )
                       ])),
@@ -340,7 +340,8 @@ class _TransferState extends State<Transfer> {
           TextField(
             controller: userTagController,
             onChanged: (value) {
-              getUserWithUserTag(value);
+              String formatted = value.replaceAll(' ', '');
+              getUserWithUserTag(formatted);
             },
             maxLength: 25,
             keyboardType: TextInputType.text,
@@ -351,7 +352,7 @@ class _TransferState extends State<Transfer> {
                   borderSide: const BorderSide(color: Colors.red, width: 1.0),
                   borderRadius: BorderRadius.circular(20)),
               enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.0),
+                  borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                   borderRadius: BorderRadius.circular(20)),
               hintText: 'Enter UserTag',
             ),
@@ -381,7 +382,7 @@ class _TransferState extends State<Transfer> {
                   borderSide: const BorderSide(color: Colors.red, width: 1.0),
                   borderRadius: BorderRadius.circular(20)),
               enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.0),
+                  borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                   borderRadius: BorderRadius.circular(20)),
               hintText: 'Enter Amount',
             ),
@@ -416,7 +417,7 @@ class _TransferState extends State<Transfer> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey)),
+                                border: Border.all(color: Colors.red)),
                             child: const Padding(
                               padding: EdgeInsets.only(top: 8),
                               child: Column(
@@ -456,7 +457,7 @@ class _TransferState extends State<Transfer> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey)),
+                                border: Border.all(color: Colors.red)),
                             child: Column(
                               children: [
                                 //section info

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:paylut/Screens/claim_bronze_win.dart';
 import 'package:paylut/models/user_model.dart';
 
 class BronzeVaultResult extends StatefulWidget {
@@ -16,6 +17,8 @@ class BronzeVaultResult extends StatefulWidget {
 class _BronzeVaultResultState extends State<BronzeVaultResult> {
   UserDetails userDetails;
   _BronzeVaultResultState({required this.userDetails});
+
+  var f = NumberFormat("##,###,###", "en_US");
 
   bool hasResult = false;
   int playedNumber1 = 0;
@@ -191,6 +194,7 @@ class _BronzeVaultResultState extends State<BronzeVaultResult> {
 
   @override
   Widget build(BuildContext context) {
+
     Stream<QuerySnapshot<Object?>> result = FirebaseFirestore.instance
         .collection('vaults')
         .doc('bronze')
@@ -286,7 +290,7 @@ class _BronzeVaultResultState extends State<BronzeVaultResult> {
                                                                                 DateFormat('yyyy-MM-dd')
                                                                                     .format(DateTime.now())) {
                                                                               return Text(
-                                                                                doc['vaultAmount'].toString(),
+                                                                                f.format(doc['vaultAmount']).toString(),
                                                                                 style: const TextStyle(
                                                                                     color: Colors.white, fontSize: 35),
                                                                               );
@@ -662,7 +666,7 @@ class _BronzeVaultResultState extends State<BronzeVaultResult> {
                                                                   DateFormat('yyyy-MM-dd')
                                                                       .format(DateTime.now())) {
                                                                 return Text(
-                                                                  doc['vaultAmount'].toString(),
+                                                                  f.format(doc['vaultAmount']).toString(),
                                                                   style: const TextStyle(
                                                                       color: Colors.white, fontSize: 35),
                                                                 );
@@ -746,258 +750,267 @@ class _BronzeVaultResultState extends State<BronzeVaultResult> {
                           //selected numbers preview
                           Expanded(
                             flex: 5,
-                            child: Column(
-                              children: [
-                                //selected numbers
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        "your crack codes entries",
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                      const SizedBox(
-                                        height: 12,
-                                      ),
-                                      Row(
-                                        children: [
-                                          //numbers
-                                          Expanded(
-                                              flex: 4,
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  //number cards
-                                                  //number 1
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            width: 2, color: Colors.grey),
-                                                        color: entry1Win ? Colors.red.withOpacity(0.2) : null,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          playedNumber1.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.red),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number2
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            width: 2, color: Colors.grey),
-                                                        color: entry2Win ? Colors.red.withOpacity(0.2) : null,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          playedNumber2.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.red),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number3
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            width: 2, color: Colors.grey),
-                                                        color: entry3Win ? Colors.red.withOpacity(0.2) : null,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          playedNumber3.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.red),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number4
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            width: 2, color: Colors.grey),
-                                                        color: entry4Win ? Colors.red.withOpacity(0.2) : null,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          playedNumber4.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.red),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number5
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            width: 2, color: Colors.grey),
-                                                        color: entry5Win ? Colors.red.withOpacity(0.2) : null,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          playedNumber5.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.red),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number6
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            width: 2, color: Colors.grey),
-                                                        color: entry6Win ? Colors.red.withOpacity(0.2) : null,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          playedNumber6.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.red),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number7
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            width: 2, color: Colors.grey),
-                                                        color: entry7Win ? Colors.red.withOpacity(0.2) : null,
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          playedNumber7.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.red),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ))
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "lib/icons/naira.png",
-                                            color: Colors.grey,
-                                            scale: 30,
-                                          ),
-                                          Text(
-                                            amountPlayed.toString(),
-                                            style:
-                                                const TextStyle(color: Colors.grey, fontSize: 25),
-                                          ),
-                                        ],
-                                      ),
-                                      const Text(
-                                        "vault break token",
-                                        style: TextStyle(color: Colors.grey, fontSize: 10),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                //claim button
-                                Expanded(
-                                  flex: 1,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: winEntryCount == 0 ? null : () {},
-                                        style: ButtonStyle(
-                                            backgroundColor: winEntryCount == 0
-                                                ? const MaterialStatePropertyAll(Colors.grey)
-                                                : const MaterialStatePropertyAll(Colors.red),
-                                            shape:
-                                                MaterialStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(20.0),
-                                              ),
-                                            )),
-                                        child: const Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 12),
-                                          child: Text("Claim Wins"),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: winEntryCount == 0 ? null
+                                : const DecorationImage(image: AssetImage('assets/backgrounds/corner_confetti.png'))
+                              ),
+                              child: Column(
+                                children: [
+                                  //selected numbers
+                                  Expanded(
+                                    flex: 2,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          "your crack codes entries",
+                                          style: TextStyle(color: Colors.red),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Row(
+                                          children: [
+                                            //numbers
+                                            Expanded(
+                                                flex: 4,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    //number cards
+                                                    //number 1
+                                                    Container(
+                                                      height: 50,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: Colors.grey),
+                                                          color: entry1Win ? Colors.red.withOpacity(0.2) : null,
+                                                          borderRadius: BorderRadius.circular(10)),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            playedNumber1.toString(),
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: 16,
+                                                                color: Colors.red),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    //number2
+                                                    Container(
+                                                      height: 50,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: Colors.grey),
+                                                          color: entry2Win ? Colors.red.withOpacity(0.2) : null,
+                                                          borderRadius: BorderRadius.circular(10)),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            playedNumber2.toString(),
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: 16,
+                                                                color: Colors.red),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    //number3
+                                                    Container(
+                                                      height: 50,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: Colors.grey),
+                                                          color: entry3Win ? Colors.red.withOpacity(0.2) : null,
+                                                          borderRadius: BorderRadius.circular(10)),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            playedNumber3.toString(),
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: 16,
+                                                                color: Colors.red),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    //number4
+                                                    Container(
+                                                      height: 50,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: Colors.grey),
+                                                          color: entry4Win ? Colors.red.withOpacity(0.2) : null,
+                                                          borderRadius: BorderRadius.circular(10)),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            playedNumber4.toString(),
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: 16,
+                                                                color: Colors.red),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    //number5
+                                                    Container(
+                                                      height: 50,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: Colors.grey),
+                                                          color: entry5Win ? Colors.red.withOpacity(0.2) : null,
+                                                          borderRadius: BorderRadius.circular(10)),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            playedNumber5.toString(),
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: 16,
+                                                                color: Colors.red),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    //number6
+                                                    Container(
+                                                      height: 50,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: Colors.grey),
+                                                          color: entry6Win ? Colors.red.withOpacity(0.2) : null,
+                                                          borderRadius: BorderRadius.circular(10)),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            playedNumber6.toString(),
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: 16,
+                                                                color: Colors.red),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    //number7
+                                                    Container(
+                                                      height: 50,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: Colors.grey),
+                                                          color: entry7Win ? Colors.red.withOpacity(0.2) : null,
+                                                          borderRadius: BorderRadius.circular(10)),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            playedNumber7.toString(),
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: 16,
+                                                                color: Colors.red),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ))
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "lib/icons/naira.png",
+                                              color: Colors.grey,
+                                              scale: 30,
+                                            ),
+                                            Text(
+                                              amountPlayed.toString(),
+                                              style:
+                                                  const TextStyle(color: Colors.grey, fontSize: 25),
+                                            ),
+                                          ],
+                                        ),
+                                        const Text(
+                                          "vault break token",
+                                          style: TextStyle(color: Colors.grey, fontSize: 10),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  //claim button
+                                  Expanded(
+                                    flex: 1,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: winEntryCount == 0 ? null : () {
+                                            Navigator.push(context, MaterialPageRoute(
+                                                builder: (context) => ClaimBronzeWin(userDetails: userDetails,)));
+                                          },
+                                          style: ButtonStyle(
+                                              backgroundColor: winEntryCount == 0
+                                                  ? const MaterialStatePropertyAll(Colors.grey)
+                                                  : const MaterialStatePropertyAll(Colors.red),
+                                              shape:
+                                                  MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20.0),
+                                                ),
+                                              )),
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(vertical: 12),
+                                            child: Text("View Winnings"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           //info text

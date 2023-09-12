@@ -31,6 +31,8 @@ class _HomeBodyState extends State<HomeBody> {
   final UserDetails userDetails;
   _HomeBodyState({required this.userDetails});
 
+  var f = NumberFormat("##,###,###", "en_US");
+
   bool showBalance = false;
   bool gotVisibility = false;
   List<int> bronzeCodes = [0, 0, 0, 0, 0, 0, 0];
@@ -117,12 +119,12 @@ class _HomeBodyState extends State<HomeBody> {
           }
         } else {
           if (kDebugMode) {
-            print('$yesterday result is not out yet');
+            print('$yesterday bronze result is not out yet');
           }
         }
       } else {
         if (kDebugMode) {
-          print('$yesterday does not exist on database');
+          print('$yesterday bronze does not exist on database');
         }
       }
     }
@@ -212,13 +214,11 @@ class _HomeBodyState extends State<HomeBody> {
           if (kDebugMode) {
             print('$today silver result is not out yet');
           }
-          return;
         }
       } else {
         if (kDebugMode) {
           print('$today silver does not exist on database');
         }
-        return;
       }
     }
 
@@ -292,11 +292,6 @@ class _HomeBodyState extends State<HomeBody> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +306,7 @@ class _HomeBodyState extends State<HomeBody> {
               color: Color(0xff861bf2),
               image: DecorationImage(
                   image: AssetImage(
-                    "assets/patterns/dotPattern.png",
+                    "assets/banners/walletBg.png",
                   ),
                   fit: BoxFit.cover),
             ),
@@ -384,7 +379,6 @@ class _HomeBodyState extends State<HomeBody> {
                                   color: Colors.white,
                                 ),
 
-                                //Todo use stream builder to update wallet balance
                                 StreamBuilder<QuerySnapshot>(
                                     stream:
                                         FirebaseFirestore.instance.collection('users').snapshots(),
@@ -400,7 +394,7 @@ class _HomeBodyState extends State<HomeBody> {
                                           if (doc.id == userDetails.uid) {
                                             return Text(
                                               showBalance
-                                                  ? ("${doc['walletBalance']}.00")
+                                                  ? f.format(doc['walletBalance'])
                                                   : "*****",
                                               style: const TextStyle(
                                                   fontSize: 30, color: Colors.white),
@@ -463,7 +457,7 @@ class _HomeBodyState extends State<HomeBody> {
                                                     Withdraw(userDetails: userDetails)));
                                       },
                             style: ButtonStyle(
-                                backgroundColor: const MaterialStatePropertyAll(Colors.red),
+                                backgroundColor: const MaterialStatePropertyAll(Colors.white),
                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(18.0),
@@ -473,7 +467,7 @@ class _HomeBodyState extends State<HomeBody> {
                                 ? "Add Fund"
                                 : walletAction == 2
                                     ? "Transfer"
-                                    : "Withdraw"),
+                                    : "Withdraw", style: const TextStyle(color: Colors.red),),
                           )
                         ],
                       )

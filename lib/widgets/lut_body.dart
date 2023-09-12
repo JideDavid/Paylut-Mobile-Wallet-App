@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:paylut/Screens/home_screen.dart';
 import 'package:paylut/Screens/silver_vault.dart';
+import 'package:paylut/Screens/spin_wheel.dart';
 import 'package:paylut/models/user_model.dart';
 import '../Screens/bronze_vault2.dart';
 import '../Screens/golden_vault.dart';
@@ -70,7 +70,7 @@ class _LotteryBodyState extends State<LotteryBody> {
                               children: [
                                 Expanded(
                                     child: GCard(
-                                  cardIcon: Icons.currency_bitcoin,
+                                  cardIcon: Icons.payments,
                                   title: "Bronze",
                                   route: BronzeVault2(userDetails: userDetails),
                                   cardColor: Colors.purple,
@@ -80,7 +80,7 @@ class _LotteryBodyState extends State<LotteryBody> {
                                 ),
                                 Expanded(
                                     child: GCard(
-                                        cardIcon: Icons.phone,
+                                        cardIcon: Icons.payments,
                                         title: "Silver",
                                         route: SilverVault(userDetails: userDetails),
                                         cardColor: Colors.blue)),
@@ -89,7 +89,7 @@ class _LotteryBodyState extends State<LotteryBody> {
                                 ),
                                 Expanded(
                                     child: GCard(
-                                        cardIcon: Icons.phone,
+                                        cardIcon: Icons.payments,
                                         title: "Golden",
                                         route: GoldenVault(
                                           userDetails: userDetails,
@@ -156,9 +156,9 @@ class _LotteryBodyState extends State<LotteryBody> {
                               children: [
                                 Expanded(
                                     child: GCard(
-                                  cardIcon: Icons.electric_meter,
-                                  title: "Electricity",
-                                  route: Home(userDetails: userDetails),
+                                  cardIcon: Icons.gamepad,
+                                  title: "Spin1",
+                                  route: SpinWheel1(userDetails: userDetails),
                                   cardColor: Colors.green,
                                 )),
                                 const SizedBox(
@@ -166,18 +166,18 @@ class _LotteryBodyState extends State<LotteryBody> {
                                 ),
                                 Expanded(
                                     child: GCard(
-                                        cardIcon: Icons.phone,
-                                        title: "Airtime",
-                                        route: Home(userDetails: userDetails),
+                                        cardIcon: Icons.gamepad,
+                                        title: "Spin2",
+                                        route: SpinWheel1(userDetails: userDetails),
                                         cardColor: Colors.yellow)),
                                 const SizedBox(
                                   width: 16,
                                 ),
                                 Expanded(
                                     child: GCard(
-                                        cardIcon: Icons.phone,
-                                        title: "Airtime",
-                                        route: Home(userDetails: userDetails),
+                                        cardIcon: Icons.gamepad,
+                                        title: "Spin3",
+                                        route: SpinWheel1(userDetails: userDetails),
                                         cardColor: Colors.pink)),
                               ],
                             ),

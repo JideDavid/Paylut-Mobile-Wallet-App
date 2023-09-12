@@ -17,6 +17,9 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
 
+  bool showLogo = true;
+  bool pressed = false;
+
   GoogleSignIn googleSignIn = GoogleSignIn();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -71,16 +74,89 @@ class _AuthScreenState extends State<AuthScreen> {
 
   }
 
+  void showLogoTimer(){
+    Future.delayed(const Duration(seconds: 3),(){
+      if(mounted){
+        setState(() {
+          showLogo = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    showLogoTimer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ElevatedButton(onPressed: signInWithGoogle, child: const Text("Sign in with google")),
-          ]
+        child: showLogo ? Center(
+          child: Image.asset('lib/icons/paylut_logo.png', height: 100,),
+        )
+            : Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image.asset('lib/icons/paylut_logo.png', height: 100, ),
+                    const Text("Paylut",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+                      textAlign: TextAlign.center,),
+                    const SizedBox(height: 4,),
+                    const Text("your all-in-one mobile wallet solution.",
+                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: Colors.grey),
+                    textAlign: TextAlign.center,),
+                  ],
+                ),
+              ),
+             Expanded(
+               flex: 1,
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    GestureDetector(
+                      onTapDown: (tapDetails){
+                        setState(() {
+                          pressed = true;
+                        });
+                      },
+
+                      onTapUp: (tapDetails){
+                        setState(() {
+                          pressed = false;
+                        });
+                        signInWithGoogle();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(20),
+                          color: pressed ? Colors.grey.withOpacity(0.2) : null,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('lib/icons/google_logo.png', height: 50,),
+                            const Text("Continue with Google"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+              ),
+            ]
+          ),
         ),
       )),
     );

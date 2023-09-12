@@ -78,7 +78,33 @@ class _BronzeVault2State extends State<BronzeVault2> with TickerProviderStateMix
             for (var doc in col.docs) {
               //checking if user as played
               if(doc.id == userDetails.uid){
-                return BronzeVaultResult(userDetails: userDetails);
+                if(doc['completeEntry']){
+                  return BronzeVaultResult(userDetails: userDetails);
+                }else{
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 24, width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.red,
+                              ),
+                            ),
+                            SizedBox(width: 8,),
+                            Text('Processing...', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                          ],
+                        ),
+                        SizedBox(height: 12,),
+                        Text('Please stay on screen until successful', style: TextStyle(fontSize: 12),)
+                      ],
+                    ),
+                  );
+                }
               }
             }
           }

@@ -44,6 +44,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
   int vaultAmount = 1000000;
   double multiplier = 1;
   bool makingEntry = false;
+  bool canPlay = true;
+  bool pressed = false;
 
   TextEditingController amountController = TextEditingController();
   Animation? animation;
@@ -80,7 +82,11 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
       'entry7': number7,
       'date': now,
       'amount': amount,
-      'uid': userDetails.uid
+      'uid': userDetails.uid,
+      'amountClaimed': 0,
+      'dateClaimed': DateTime.now(),
+      'claimed': false,
+      'completeEntry': false
     });
     if (kDebugMode) {
       print('recoded vault entries');
@@ -255,7 +261,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
           'result6': 0,
           'result7': 0,
           'hasResult': false,
-          'vaultAmount': 1000000
+          'vaultAmount': 1000000,
+          'distributionAmount': 0,
         });
         if (kDebugMode) {
           print('created default document for vault break codes results');
@@ -292,6 +299,16 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
         .collection('dailyEntries')
         .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
         .update({'vaultAmount': vAmount + amount});
+
+    //marking entries as complete
+    await FirebaseFirestore.instance
+        .collection('vaults')
+        .doc('bronze')
+        .collection('dailyEntries')
+        .doc(DateFormat('yyyy-MM-dd').format(now))
+        .collection('entries')
+        .doc(userDetails.uid)
+    .update({'completeEntry': true});
   }
 
   //function to charge wallet
@@ -343,6 +360,11 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
 
   //function to charge wallet and record transaction and entries in history
   Future<void> chargeWalletAndRecordVaultEntry() async {
+
+    bool playable = await getCanPlay();
+    if(!playable) {
+      return;
+    }
 
     DocumentSnapshot userData =
         await FirebaseFirestore.instance.collection('users').doc(userDetails.uid).get();
@@ -407,9 +429,49 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
         .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
         .get();
 
-    vaultAmount = snapshot.get('vaultAmount');
-    if (mounted) {
-      setState(() {});
+    if(snapshot.exists){
+      vaultAmount = snapshot.get('vaultAmount');
+      if (mounted) {
+        setState(() {});
+      }
+    }else{
+      if(kDebugMode){
+        print('vault amount for bronze ${DateFormat('yyyy-MM-dd').format(DateTime.now())} do not exist');
+      }
+    }
+
+
+  }
+  
+  Future<bool> getCanPlay() async{
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('vaults')
+        .doc('bronze')
+        .collection('dailyEntries')
+        .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
+        .get();
+
+    if(snapshot.exists){
+      bool hasResult = snapshot.get('hasResult');
+      if(hasResult){
+        canPlay = false;
+        if(mounted){
+          setState(() {});
+        }
+        return canPlay;
+      }else{
+        canPlay = true;
+        if(mounted){
+          setState(() {});
+        }
+        return canPlay;
+      }
+    }else{
+      canPlay = true;
+      if(mounted){
+        setState(() {});
+      }
+      return canPlay;
     }
   }
 
@@ -417,11 +479,14 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
   void initState() {
     super.initState();
     getVaultAmount();
+    getCanPlay();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
+      children: [
+        Column(
       children: [
         Expanded(
           child: Padding(
@@ -1137,6 +1202,67 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
           ),
         )
       ],
+        ),
+        Visibility(
+          visible: canPlay ? false : true,
+          child: Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.7)
+            ),
+            child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Oops! Results are out already,',
+                    textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,
+                      color: Colors.white
+                      ),
+                    ),
+                    const Text('Check back tomorrow to make entries',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12,
+                          color: Colors.white
+                      ),
+                    ),
+                    const SizedBox(height: 20,),
+                    GestureDetector(
+                      onTapDown: (tapDetails){
+                        setState(() {
+                          pressed = true;
+                        });
+                      },
+                      onTapUp: (tapDetails){
+                        setState(() {
+                          pressed = false;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: pressed ? Colors.red.withOpacity(0.2) : null,
+                          border: Border.all(
+                            color: Colors.red,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                          child: Text(
+                            'View Results',
+                            style: TextStyle(fontWeight: FontWeight.bold,
+                            color: Colors.red
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+          ),
+        )
+      ]
     );
   }
 }
