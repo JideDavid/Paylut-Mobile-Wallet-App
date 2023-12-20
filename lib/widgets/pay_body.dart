@@ -31,37 +31,38 @@ class _PayBodyState extends State<PayBody> {
 
   List<GiftDetails> gifts = [];
   int transitionTime = 300;
-  List<double> scales = [0.8,0.8,0.8,0.8];
+  List<double> scales = [0.8, 0.8, 0.8, 0.8];
 
-  Future<void> getGifts() async{
-    if(mounted){
+  Future<void> getGifts() async {
+    if (mounted) {
       setState(() {
         gettingGift = true;
       });
     }
 
     QuerySnapshot snapshot = await FirebaseFirestore.instance
-    .collection('users').doc(userDetails.uid).collection('gifts').get();
+        .collection('users')
+        .doc(userDetails.uid)
+        .collection('gifts')
+        .get();
 
-    if(snapshot.docs.isNotEmpty){
-      if(kDebugMode){
+    if (snapshot.docs.isNotEmpty) {
+      if (kDebugMode) {
         print('user has gifts');
       }
 
       var giftsSnap = snapshot.docs;
-      for(var gift in giftsSnap){
+      for (var gift in giftsSnap) {
         gifts.add(GiftDetails.fromJson(gift));
       }
-
-    }else{
-      if(kDebugMode){
+    } else {
+      if (kDebugMode) {
         print('user has no gifts');
       }
     }
 
-
     gettingGift = false;
-    if(mounted){
+    if (mounted) {
       setState(() {});
     }
   }
@@ -70,21 +71,27 @@ class _PayBodyState extends State<PayBody> {
   void initState() {
     super.initState();
     getGifts();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       scales[0] = 1;
-      if(mounted){
+      if (mounted) {
         setState(() {});
       }
-      await Future.delayed(const Duration(milliseconds: 50), (){scales[1] = 1;});
-      if(mounted){
+      await Future.delayed(const Duration(milliseconds: 50), () {
+        scales[1] = 1;
+      });
+      if (mounted) {
         setState(() {});
       }
-      await Future.delayed(const Duration(milliseconds: 50), (){scales[2] = 1;});
-      if(mounted){
+      await Future.delayed(const Duration(milliseconds: 50), () {
+        scales[2] = 1;
+      });
+      if (mounted) {
         setState(() {});
       }
-      await Future.delayed(const Duration(milliseconds: 50), (){scales[3] = 1;});
-      if(mounted){
+      await Future.delayed(const Duration(milliseconds: 50), () {
+        scales[3] = 1;
+      });
+      if (mounted) {
         setState(() {});
       }
     });
@@ -92,7 +99,6 @@ class _PayBodyState extends State<PayBody> {
 
   @override
   Widget build(BuildContext context) {
-
     double sw = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
@@ -215,7 +221,10 @@ class _PayBodyState extends State<PayBody> {
           const SizedBox(
             height: 16,
           ),
-          //received gifts section
+
+          ///
+          ///received gifts section
+          ///
           AnimatedScale(
             scale: scales[3],
             duration: Duration(milliseconds: transitionTime),
@@ -247,37 +256,51 @@ class _PayBodyState extends State<PayBody> {
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green),
+                          border: Border.all(color: gifts.isEmpty ? Colors.grey.withOpacity(0) : Colors.green),
                           borderRadius: BorderRadius.circular(24),
-                          color: const Color(0xff2ee1d2).withOpacity(0.2),
+                          color: gifts.isEmpty ? Colors.grey.withOpacity(0.2) : const Color(0xff2ee1d2).withOpacity(0.2),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: gettingGift ? const Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 15, width: 15,
-                                child: CircularProgressIndicator(
-                                  color: Colors.red,
-                                  strokeWidth: 2,
-                                ),),
-                                SizedBox(width: 4,),
-                                Text('Loading...', style: TextStyle(color: Colors.green),)
-                              ],
-                            ),
-                          )
-                          : Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: ListView.builder(
-                              itemCount: gifts.length,
-                                itemBuilder: (context, index){
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: GiftItem(type: gifts[index].type, senderName: gifts[index].senderName),
-                                );
-                            }),
-                          ),
+                          child: gettingGift
+                              ? const Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.red,
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        'Loading...',
+                                        style: TextStyle(color: Colors.green),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  child: ListView.builder(
+                                      itemCount: gifts.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          child: GiftItem(
+                                              type: gifts[index].type,
+                                              senderName:
+                                                  gifts[index].senderName),
+                                        );
+                                      }),
+                                ),
                         ),
                       ),
                     )
