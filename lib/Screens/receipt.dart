@@ -80,7 +80,6 @@ class _ReceiptState extends State<Receipt> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getReceipt();
   }

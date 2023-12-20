@@ -13,6 +13,10 @@ class SCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    double sw = MediaQuery.of(context).size.width;
+    //double sh = MediaQuery.of(context).size.height;
+
     return GestureDetector(
       onTap: (){
         Navigator.push(context,
@@ -22,6 +26,8 @@ class SCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Container(
+          height: sw/5,
+            width: sw/5,
           color: Colors.grey.withOpacity(0.2),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -33,7 +39,7 @@ class SCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(title, style: const TextStyle(fontSize: 12,fontWeight: FontWeight.normal),
-                  overflow: TextOverflow.fade,),
+                  overflow: TextOverflow.ellipsis,),
                 ],
               )
             ],

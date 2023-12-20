@@ -78,7 +78,6 @@ class _GameReceiptState extends State<GameReceipt> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getReceipt();
   }

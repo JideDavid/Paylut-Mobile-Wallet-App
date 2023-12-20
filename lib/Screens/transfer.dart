@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:paylut/Screens/receipt.dart';
 import 'package:paylut/models/user_model.dart';
+import 'package:paylut/services/cloud_messenger.dart';
 
 class Transfer extends StatefulWidget {
   final UserDetails userDetails;
   const Transfer({super.key, required this.userDetails});
+
 
   @override
   // ignore: no_logic_in_create_state
@@ -16,6 +19,8 @@ class Transfer extends StatefulWidget {
 class _TransferState extends State<Transfer> {
   final UserDetails userDetails;
   _TransferState({required this.userDetails});
+
+  var f = NumberFormat("##,###,##0.00", "en_US");
 
   TextStyle heading = const TextStyle(
     fontWeight: FontWeight.bold,
@@ -37,11 +42,14 @@ class _TransferState extends State<Transfer> {
   String transactionRef = '';
   List<UserDetails> contacts = [];
   bool isSending = false;
+  bool userSaved = false;
 
   Future<void> getUserWithUserTag(String userTag) async {
+
     if (mounted) {
       setState(() {
         isLoading = true;
+        userSaved = false;
       });
     }
 
@@ -62,6 +70,10 @@ class _TransferState extends State<Transfer> {
       if (user.email != userDetails.email) {
         tagUsers = [];
         tagUsers.add(user);
+        userSaved = contacts.any((contact) => contact.uid == tagUsers[0].uid);
+        if(kDebugMode){
+          print('userSaved $userSaved');
+        }
         if (mounted) {
           setState(() {});
         }
@@ -72,7 +84,7 @@ class _TransferState extends State<Transfer> {
   Future<void> transferToUser() async {
     DateTime now = DateTime.now();
 
-    //formatting and setting transaction reference
+    ///formatting and setting transaction reference
     String ref = "ref_$now";
     ref = ref.replaceAll(' ', '');
     ref = ref.replaceAll('-', '');
@@ -80,32 +92,32 @@ class _TransferState extends State<Transfer> {
     ref = ref.replaceAll('.', '');
     transactionRef = ref;
 
-    //getting user balance
+    ///getting user balance
     DocumentSnapshot walletSnapshot =
         await FirebaseFirestore.instance.collection('users').doc(userDetails.uid).get();
     walletBalance = walletSnapshot.get('walletBalance');
     int newWalletBalance = walletBalance - amount;
 
-    //getting receiver's balance
+    ///getting receiver's balance
     DocumentSnapshot userWallet =
         await FirebaseFirestore.instance.collection('users').doc(tagUsers[0].uid).get();
     int receiverBalance = userWallet.get('walletBalance');
     int newReceiverBalance = receiverBalance + amount;
 
     if (walletBalance >= amount) {
-      //debiting user
+      ///debiting user
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userDetails.uid)
           .update({'walletBalance': newWalletBalance});
 
-      //crediting receiver
+      ///crediting receiver
       await FirebaseFirestore.instance
           .collection('users')
           .doc(tagUsers[0].uid)
           .update({"walletBalance": newReceiverBalance});
 
-      //recording transaction to user's history
+      ///recording transaction to user's history
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userDetails.uid)
@@ -124,7 +136,7 @@ class _TransferState extends State<Transfer> {
         'userId': tagUsers[0].uid
       });
 
-      //recording transaction to user's history
+      ///recording transaction to user's history
       await FirebaseFirestore.instance
           .collection('users')
           .doc(tagUsers[0].uid)
@@ -142,6 +154,11 @@ class _TransferState extends State<Transfer> {
         'username': userDetails.name,
         'userId': userDetails.uid
       });
+
+      ///notifying receiver with transaction details
+      String title = 'Credit alert';
+      String body = 'You have received a sum of ${f.format(amount)} NGN from ${userDetails.name}';
+      NotifyMessage().notify(tagUsers[0].uid, title, body);
 
       // ignore: use_build_context_synchronously
       showDialog(
@@ -325,7 +342,7 @@ class _TransferState extends State<Transfer> {
             SizedBox(
               height: 20, width: 20,
               child: CircularProgressIndicator(
-                strokeWidth: 2,
+                strokeWidth: 2, color: Colors.red,
               ),
             ),
             SizedBox(width: 4,),
@@ -347,6 +364,7 @@ class _TransferState extends State<Transfer> {
             keyboardType: TextInputType.text,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
+              filled: true,
               counterText: "",
               focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.red, width: 1.0),
@@ -377,6 +395,7 @@ class _TransferState extends State<Transfer> {
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
+              filled: true,
               counterText: "",
               focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.red, width: 1.0),
@@ -404,7 +423,7 @@ class _TransferState extends State<Transfer> {
                           SizedBox(
                             height: 4,
                           ),
-                          Text('getting contacts'),
+                          Text('getting beneficiary'),
                         ],
                       ),
                     ))
@@ -425,7 +444,7 @@ class _TransferState extends State<Transfer> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Your contact list empty',
+                                    'Your beneficiary list empty',
                                     style: TextStyle(color: Colors.grey),
                                   ),
                                   SizedBox(
@@ -572,7 +591,7 @@ class _TransferState extends State<Transfer> {
                           child: Center(
                           child: Text('No user found'),
                         ))
-                      //receiver details card
+                      //user details card
                       : Expanded(
                           child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -630,21 +649,14 @@ class _TransferState extends State<Transfer> {
                                           height: 16,
                                         ),
                                         ElevatedButton(
-                                          onPressed: (contacts.contains(UserDetails(
-                                                  uid: tagUsers[0].uid,
-                                                  name: tagUsers[0].name,
-                                                  email: tagUsers[0].email,
-                                                  walletTag: tagUsers[0].walletTag,
-                                                  walletBalance: tagUsers[0].walletBalance,
-                                                  image: tagUsers[0].image,
-                                                  date: tagUsers[0].date)))
-                                              ? null
+                                          onPressed: userSaved ? null
                                               : () {
                                                   addToContact(tagUsers[0].uid);
                                                 },
                                           style: ButtonStyle(
-                                              backgroundColor:
-                                                  const MaterialStatePropertyAll(Colors.red),
+                                              backgroundColor: userSaved ?
+                                              const MaterialStatePropertyAll(Colors.grey)
+                                                  : const MaterialStatePropertyAll(Colors.red),
                                               shape:
                                                   MaterialStateProperty.all<RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(

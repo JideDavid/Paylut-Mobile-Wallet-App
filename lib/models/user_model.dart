@@ -8,6 +8,7 @@ class UserDetails {
   late final int walletBalance;
   final String image;
   final Timestamp date;
+  final String fCMToken;
 
   UserDetails({
     required this.uid,
@@ -17,6 +18,7 @@ class UserDetails {
     required this.walletBalance,
     required this.image,
     required this.date,
+    required this.fCMToken,
   });
 
   factory UserDetails.fromJson(DocumentSnapshot snapshot) {
@@ -27,7 +29,9 @@ class UserDetails {
         walletTag: snapshot['walletTag'],
         walletBalance: snapshot['walletBalance'],
         image: snapshot['image'],
-        date: snapshot['date']);
+        date: snapshot['date'],
+        fCMToken: snapshot['fCMToken']
+    );
   }
 
 }

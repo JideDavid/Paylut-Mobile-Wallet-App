@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
-
+import 'package:intl/intl.dart';
 import 'package:paylut/models/user_model.dart';
+import '../widgets/silver_entry_body.dart';
+import '../widgets/silver_vault_result.dart';
 
 class SilverVault extends StatefulWidget {
   final UserDetails userDetails;
@@ -12,73 +14,14 @@ class SilverVault extends StatefulWidget {
   State<SilverVault> createState() => _SilverVaultState(userDetails: userDetails);
 }
 
-class _SilverVaultState extends State<SilverVault> with TickerProviderStateMixin{
+class _SilverVaultState extends State<SilverVault> {
   UserDetails userDetails;
   _SilverVaultState({required this.userDetails});
 
-  int number1 = 0;
-  bool isScrolling1 = false;
-  int number2 = 0;
-  bool isScrolling2 = false;
-  int number3 = 0;
-  bool isScrolling3 = false;
-  int number4 = 0;
-  bool isScrolling4 = false;
-  int number5 = 0;
-  bool isScrolling5 = false;
-  bool hasInputAmount = false;
-  int amount = 0;
-  int possibleEarnings = 0;
-  int vaultAmount = 10000000;
-
-  TextEditingController amountController = TextEditingController();
-  Animation? animation;
-  AnimationController? animationControllerSilver;
-
-  void calculatePossibleEarnings(int amount){
-    setState(() {
-      Random random = Random();
-      int randomNumber = random.nextInt(20) + 17; // from 10 up to 100 included
-      possibleEarnings = randomNumber * amount;
-    });
-  }
-  Future<void> updateAmountInVault() async {
-
-    Random random = Random();
-    int randomTime = random.nextInt(6) + 1; // from 1 up to 3 included
-    int randomAmount = random.nextInt(9999) + 10; // from 10 up to 9999
-
-    for(int i = 0; i < 1000 && mounted; i++){
-      int oldVaultAmount = vaultAmount;
-      int newVaultAmount = vaultAmount + randomAmount;
-      animationControllerSilver = AnimationController(duration: const Duration(seconds: 1), vsync: this,);
-      animation = IntTween(begin: oldVaultAmount, end: newVaultAmount).animate(CurvedAnimation(parent: animationControllerSilver!, curve: Curves.easeOut));
-      animationControllerSilver!.forward();
-      animationControllerSilver!.addListener((){
-        if(mounted){
-          setState(() {});
-        }
-      });
-      vaultAmount = newVaultAmount;
-      await Future.delayed(Duration(seconds: randomTime), (){});
-    }
-
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    updateAmountInVault();
-  }
-
-  @override
-  void dispose() {
-    animationControllerSilver!.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
+
     TextStyle heading = const TextStyle(
       fontWeight: FontWeight.bold,
     );
@@ -86,8 +29,14 @@ class _SilverVaultState extends State<SilverVault> with TickerProviderStateMixin
       fontWeight: FontWeight.normal,
       fontSize: 12,
     );
-    // TextStyle sectionHeading =
-    //     const TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.deepPurple);
+
+    Stream<QuerySnapshot<Object?>>? hasPlayed = FirebaseFirestore
+        .instance.collection('vaults')
+        .doc('silver')
+        .collection('dailyEntries')
+        .doc(DateFormat('yyyy-MM-dd').format(DateTime.now()))
+        .collection('entries').snapshots();
+    
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -96,7 +45,7 @@ class _SilverVaultState extends State<SilverVault> with TickerProviderStateMixin
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Bronze Vault",
+              "Silver Vault",
               style: heading,
             ),
             Text(
@@ -110,554 +59,59 @@ class _SilverVaultState extends State<SilverVault> with TickerProviderStateMixin
               onPressed: () {},
               icon: const Icon(
                 Icons.more_vert_outlined,
-              )),
+              ))
         ],
         toolbarHeight: 80,
         elevation: 0,
         backgroundColor: Colors.black.withOpacity(0),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  //Amount Section
-                  SizedBox(
-                    child: TextField(
-                      controller: amountController,
-                      onChanged: (value) {
-                        amount = int.tryParse(amountController.text)!;
-                        if (amount < 10) {
-                          setState(() {
-                            hasInputAmount = false;
-                            possibleEarnings = 0;
-                          });
-                        } else {
-                          setState(() {
-                            hasInputAmount = true;
-                            calculatePossibleEarnings(amount);
-                          });
-                        }
-                      },
-                      maxLength: 4,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        counterText: "",
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.red, width: 1.0),
-                            borderRadius: BorderRadius.circular(20)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.deepPurple, width: 1.0),
-                            borderRadius: BorderRadius.circular(20)),
-                        hintText: 'Enter Amount',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  //possible earning
-                  Container(
-                    height: 60,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Colors.deepPurple),
-                        borderRadius: BorderRadius.circular(20),
-                    ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: hasPlayed,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting){
+            return const Center(child: Text('Loading...'),);
+          }
+
+          if ( snapshot.data != null )
+          {
+            var col = snapshot.data!;
+            for (var doc in col.docs) {
+              //checking if user as played
+              if(doc.id == userDetails.uid){
+                if(doc['completeEntry']){
+                  return SilverVaultResult(userDetails: userDetails);
+                }else{
+                  return const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset("lib/icons/naira.png", color: Colors.red, scale: 20,),
-                            Text(
-                              possibleEarnings.toString(),
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 30,
-                                  color: Colors.red),
-                            ),
-                          ],
-                        ),
-                        const Text("Possible Earnings",
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 12,
-                              color: Colors.deepPurple),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  //number selection & preview
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        color: Colors.grey.withOpacity(0.2),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.deepPurple, borderRadius: BorderRadius.circular(0),
-                                    image: const DecorationImage(image: AssetImage("assets/patterns/dotPattern.png"),
-                                        fit: BoxFit.cover),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      "vault codes",
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    Row(
-                                      children: [
-                                        //numbers
-                                        Expanded(
-                                            flex: 4,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                //number cards
-                                                //number 1
-                                                Container(
-                                                  height: 50,
-                                                  width: 35,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: isScrolling1
-                                                              ? Colors.red
-                                                              : Colors.white),
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        number1.toString(),
-                                                        style: const TextStyle(
-                                                            fontWeight: FontWeight.normal,
-                                                            fontSize: 16,
-                                                            color: Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 8,
-                                                ),
-                                                //number2
-                                                Container(
-                                                  height: 50,
-                                                  width: 35,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: isScrolling2
-                                                              ? Colors.red
-                                                              : Colors.white),
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        number2.toString(),
-                                                        style: const TextStyle(
-                                                            fontWeight: FontWeight.normal,
-                                                            fontSize: 16,
-                                                            color: Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 8,
-                                                ),
-                                                //number3
-                                                Container(
-                                                  height: 50,
-                                                  width: 35,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: isScrolling3
-                                                              ? Colors.red
-                                                              : Colors.white),
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        number3.toString(),
-                                                        style: const TextStyle(
-                                                            fontWeight: FontWeight.normal,
-                                                            fontSize: 16,
-                                                            color: Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 8,
-                                                ),
-                                                //number4
-                                                Container(
-                                                  height: 50,
-                                                  width: 35,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: isScrolling4
-                                                              ? Colors.red
-                                                              : Colors.white),
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        number4.toString(),
-                                                        style: const TextStyle(
-                                                            fontWeight: FontWeight.normal,
-                                                            fontSize: 16,
-                                                            color: Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 8,
-                                                ),
-                                                //number5
-                                                Container(
-                                                  height: 50,
-                                                  width: 35,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: isScrolling5
-                                                              ? Colors.red
-                                                              : Colors.white),
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        number5.toString(),
-                                                        style: const TextStyle(
-                                                            fontWeight: FontWeight.normal,
-                                                            fontSize: 16,
-                                                            color: Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 8,
-                                                ),
-                                              ],
-                                            ))
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset("lib/icons/naira.png", color: Colors.white, scale: 30,),
-                                        Text(animation!.value.toString(), style: const TextStyle(color: Colors.white, fontSize: 20),),
-                                      ],
-                                    ),
-                                    const Text("amount in vault", style: TextStyle(color: Colors.white, fontSize: 10),),
-                                  ],
-                                ),
+                            SizedBox(
+                              height: 24, width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.red,
                               ),
                             ),
-                            //number picker section
-                            Expanded(
-                              flex: 6,
-                              child: Stack(alignment: AlignmentDirectional.center, children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 35,
-                                    color: Colors.grey.withOpacity(0.2),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    //scroll wheel1
-                                    SizedBox(
-                                      width: 30,
-                                      child: ListWheelScrollView.useDelegate(
-                                        onSelectedItemChanged: (value) async {
-                                          setState(() {
-                                            if (value <= 98) {
-                                              number1 = value + 1;
-                                              isScrolling1 = true;
-                                            } else {
-                                              number1 = 99;
-                                            }
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isScrolling1 = false;
-                                              setState(() {});
-                                            });
-                                          });
-                                        },
-                                        squeeze: 5,
-                                        itemExtent: 100,
-                                        perspective: 0.009,
-                                        diameterRatio: 1,
-                                        physics: const FixedExtentScrollPhysics(),
-                                        childDelegate: ListWheelChildBuilderDelegate(
-                                            childCount: 100,
-                                            builder: (context, index) {
-                                              return Text(
-                                                index.toString(),
-                                                style: TextStyle(
-                                                    fontWeight: number1 == index
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                                    fontSize: 20,
-                                                    color:
-                                                        number1 == index ? Colors.red : Colors.grey),
-                                              );
-                                            }),
-                                      ),
-                                    ),
-                                    const VerticalDivider(
-                                      indent: 150,
-                                      endIndent: 150,
-                                      thickness: 2,
-                                    ),
-                                    //scroll wheel2
-                                    SizedBox(
-                                      width: 30,
-                                      child: ListWheelScrollView.useDelegate(
-                                        onSelectedItemChanged: (value) {
-                                          setState(() {
-                                            if (value <= 98) {
-                                              number2 = value + 1;
-                                              isScrolling2 = true;
-                                            } else {
-                                              number2 = 99;
-                                            }
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isScrolling2 = false;
-                                              setState(() {});
-                                            });
-                                          });
-                                        },
-                                        squeeze: 5,
-                                        itemExtent: 100,
-                                        perspective: 0.009,
-                                        diameterRatio: 1,
-                                        physics: const FixedExtentScrollPhysics(),
-                                        childDelegate: ListWheelChildBuilderDelegate(
-                                            childCount: 100,
-                                            builder: (context, index) {
-                                              return Text(
-                                                index.toString(),
-                                                style: TextStyle(
-                                                    fontWeight: number2 == index
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                                    fontSize: 20,
-                                                    color:
-                                                        number2 == index ? Colors.red : Colors.grey),
-                                              );
-                                            }),
-                                      ),
-                                    ),
-                                    const VerticalDivider(
-                                      indent: 150,
-                                      endIndent: 150,
-                                      thickness: 2,
-                                    ),
-                                    //scroll wheel3
-                                    SizedBox(
-                                      width: 30,
-                                      child: ListWheelScrollView.useDelegate(
-                                        onSelectedItemChanged: (value) {
-                                          setState(() {
-                                            if (value <= 98) {
-                                              number3 = value + 1;
-                                              isScrolling3 = true;
-                                            } else {
-                                              number3 = 99;
-                                            }
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isScrolling3 = false;
-                                              setState(() {});
-                                            });
-                                          });
-                                        },
-                                        squeeze: 5,
-                                        itemExtent: 100,
-                                        perspective: 0.009,
-                                        diameterRatio: 1,
-                                        physics: const FixedExtentScrollPhysics(),
-                                        childDelegate: ListWheelChildBuilderDelegate(
-                                            childCount: 100,
-                                            builder: (context, index) {
-                                              return Text(
-                                                index.toString(),
-                                                style: TextStyle(
-                                                    fontWeight: number3 == index
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                                    fontSize: 20,
-                                                    color:
-                                                        number3 == index ? Colors.red : Colors.grey),
-                                              );
-                                            }),
-                                      ),
-                                    ),
-                                    const VerticalDivider(
-                                      indent: 150,
-                                      endIndent: 150,
-                                      thickness: 2,
-                                    ),
-                                    //scroll wheel4
-                                    SizedBox(
-                                      width: 30,
-                                      child: ListWheelScrollView.useDelegate(
-                                        onSelectedItemChanged: (value) {
-                                          setState(() {
-                                            if (value <= 98) {
-                                              number4 = value + 1;
-                                              isScrolling4 = true;
-                                            } else {
-                                              number4 = 99;
-                                            }
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isScrolling4 = false;
-                                              setState(() {});
-                                            });
-                                          });
-                                        },
-                                        squeeze: 5,
-                                        itemExtent: 100,
-                                        perspective: 0.009,
-                                        diameterRatio: 1,
-                                        physics: const FixedExtentScrollPhysics(),
-                                        childDelegate: ListWheelChildBuilderDelegate(
-                                            childCount: 100,
-                                            builder: (context, index) {
-                                              return Text(
-                                                index.toString(),
-                                                style: TextStyle(
-                                                    fontWeight: number4 == index
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                                    fontSize: 20,
-                                                    color:
-                                                        number4 == index ? Colors.red : Colors.grey),
-                                              );
-                                            }),
-                                      ),
-                                    ),
-                                    const VerticalDivider(
-                                      indent: 150,
-                                      endIndent: 150,
-                                      thickness: 2,
-                                    ),
-                                    //scroll wheel5
-                                    SizedBox(
-                                      width: 30,
-                                      child: ListWheelScrollView.useDelegate(
-                                        onSelectedItemChanged: (value) {
-                                          setState(() {
-                                            if (value <= 98) {
-                                              number5 = value + 1;
-                                              isScrolling5 = true;
-                                            } else {
-                                              number5 = 99;
-                                            }
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isScrolling5 = false;
-                                              setState(() {});
-                                            });
-                                          });
-                                        },
-                                        squeeze: 5,
-                                        itemExtent: 100,
-                                        perspective: 0.009,
-                                        diameterRatio: 1,
-                                        physics: const FixedExtentScrollPhysics(),
-                                        childDelegate: ListWheelChildBuilderDelegate(
-                                            childCount: 100,
-                                            builder: (context, index) {
-                                              return Text(
-                                                index.toString(),
-                                                style: TextStyle(
-                                                    fontWeight: number5 == index
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                                    fontSize: 20,
-                                                    color:
-                                                        number5 == index ? Colors.red : Colors.grey),
-                                              );
-                                            }),
-                                      ),
-                                    ),
-                                    const VerticalDivider(
-                                      indent: 150,
-                                      endIndent: 150,
-                                      thickness: 2,
-                                    ),
-                                  ],
-                                ),
-                              ]),
-                            ),
+                            SizedBox(width: 8,),
+                            Text('Processing...', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                           ],
                         ),
-                      ),
+                        SizedBox(height: 12,),
+                        Text('Please stay on screen until successful', style: TextStyle(fontSize: 12),)
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          //crack vault button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: !hasInputAmount ? null : () {},
-                    style: ButtonStyle(
-                        backgroundColor: !hasInputAmount
-                            ? const MaterialStatePropertyAll(Colors.grey)
-                            : const MaterialStatePropertyAll(Colors.red),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                          ),
-                        )),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Text("Crack Vault"),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+                  );
+                }
+              }
+            }
+          }
+
+          return SilverVaultEntry(userDetails: userDetails);
+        },
       ),
     );
   }
 }
-
-

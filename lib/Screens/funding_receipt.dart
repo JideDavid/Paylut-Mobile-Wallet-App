@@ -78,7 +78,6 @@ class _FundingReceiptState extends State<FundingReceipt> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getReceipt();
   }

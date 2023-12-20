@@ -44,7 +44,7 @@ class _ProfileBodyState extends State<ProfileBody> {
             alignment: AlignmentDirectional.bottomCenter,
             children: [
               CircleAvatar(
-              radius: 120,
+              radius: 125,
               backgroundColor: Colors.grey.withOpacity(0.5),
               child: CircleAvatar(
                 radius: 115,
@@ -53,12 +53,14 @@ class _ProfileBodyState extends State<ProfileBody> {
               ),
             ),
               Positioned(
-                bottom: 10,
+                bottom: 20,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: Container(
                     color: Colors.red.withOpacity(0.3),
+                      width: 40, height: 40,
                       child: IconButton(onPressed: (){},
+                          iconSize:20,
                           icon: const Icon(Icons.edit, color: Colors.white,))),
                 ),
               )

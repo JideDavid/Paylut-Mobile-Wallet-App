@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
@@ -114,10 +113,26 @@ class _FundWalletState extends State<FundWallet> {
         'initialBalance': initialBalance,
         'newBalance': newBalance
       });
+
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, '/main');
-      setState(() {});
+      //Navigator.of(context).pop();
     }
+  }
+
+  //constructing FCM notification payload
+  String constructFCMPayload(String? token) {
+    return jsonEncode({
+      'token': token,
+      'priority': 'high',
+      'data': {
+        'via': 'FlutterFire Cloud Messaging!!!',
+        'page': 'home',
+      },
+      'notification': {
+        'title': 'Credit Alert',
+        'body': '${userDetails.name} our Paylut account has just been funded $amount NGN',
+      },
+    });
   }
 
   @override
@@ -173,7 +188,7 @@ class _FundWalletState extends State<FundWallet> {
                 });
               }
             },
-            maxLength: 6,
+            maxLength: 9,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             decoration: InputDecoration(

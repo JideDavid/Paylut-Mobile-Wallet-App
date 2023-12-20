@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +39,7 @@ class _DataState extends State<Data> {
   bool loading = false;
   List<dynamic> serviceList = [];
   List<Number> savedNumbers = [];
+  bool processing = false;
 
   TextStyle heading = const TextStyle(
     fontWeight: FontWeight.bold,
@@ -81,10 +81,10 @@ class _DataState extends State<Data> {
 
   validateForm() {
     if (kDebugMode) {
-      print('hasAmount: $hasAmount, hasNumber: $hasNumber, selectedProvider: $selectedProvider');
+      print('hasNumber: $hasNumber, selectedProvider: $selectedProvider, selectedService: $selectedService');
     }
 
-    if (hasAmount && hasNumber && selectedProvider) {
+    if (hasNumber && selectedProvider && selectedService) {
       setState(() {
         isReady = true;
       });
@@ -267,6 +267,127 @@ class _DataState extends State<Data> {
         });
   }
 
+  confirmTransaction() async{
+
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              //backgroundColor: Colors.green,
+              title: const Row(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Confirm Buy Data',
+                    style: TextStyle(
+                        color: Colors.red),
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                  height: 100,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        processing ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 15, width: 15,
+                              child: CircularProgressIndicator( color: Colors.red, strokeWidth: 2,),)
+                            ,SizedBox(width: 8,),
+                            Text('Processing...')
+                          ],
+                        )
+                            : Text(
+                          'Confirm airtime purchase of ${serviceList[serviceIndex]['package_name']} to $phoneNum?',
+                          style: const TextStyle(),
+                          textAlign:
+                          TextAlign.center,
+                        )
+                      ])),
+              actions: [
+                Visibility(
+                  visible: !processing,
+                  child: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      //cancel button
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop();
+                          },
+                          child: const Center(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons
+                                      .cancel_outlined,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      color: Colors
+                                          .grey),
+                                ),
+                              ],
+                            ),
+                          )),
+                      //confirm buy airtime button
+                      TextButton(
+                          onPressed: () {
+                            buyDataAction();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Center(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons
+                                      .check_circle_outline,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  'Confirm',
+                                  style: TextStyle(
+                                      color: Colors
+                                          .grey),
+                                ),
+                              ],
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+
+  }
+
+  buyDataAction() async{
+    setState(() { processing = true; });
+    if (saveNumber) {
+      await saveNewNumber();
+    } else {
+      await updateUseTime();
+    }
+    setState(() { processing = false; });
+  }
+
   Future<bool> getServiceList() async{
     loading = true;
     if(mounted){
@@ -279,7 +400,6 @@ class _DataState extends State<Data> {
       'API-Token': 'sec-Hro8tuka5titYc5ah5bg6bgQuwGxnsfR',
     },
       body: {
-        'service_id': '0002',
         'vendor_id': activeIndex == 1 ? '0023' : activeIndex == 2 ? '0026'
             : activeIndex == 3 ? '0024' : '0025'
       }
@@ -352,7 +472,19 @@ class _DataState extends State<Data> {
         elevation: 0,
         backgroundColor: Colors.black.withOpacity(0),
       ),
-      body: Padding(
+      body: processing ? const Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 15, width: 15,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red,),
+            ),
+            SizedBox(width: 8,),
+            Text('Processing...')
+          ],),
+      )
+      : Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
@@ -381,6 +513,7 @@ class _DataState extends State<Data> {
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
+                filled: true,
                 counterText: "",
                 focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.red, width: 1.0),
@@ -435,6 +568,7 @@ class _DataState extends State<Data> {
                                           child: GestureDetector(
                                             onTap: (){
                                               selectServiceIndex(index);
+                                              validateForm();
                                               Navigator.of(context).pop();
                                             },
                                             child: Card(
@@ -458,11 +592,13 @@ class _DataState extends State<Data> {
                             });
                       },
                       child: Container(
-                        height: 50,
+                        height: 60,
                         width: double.infinity,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.red)),
+                            border: Border.all(color: selectedService ? Colors.grey : Colors.red),
+                          color: selectedService ? Colors.grey.withOpacity(0.2) : null,
+                        ),
                         child: Center(child:
                         loading ? const SizedBox(
                           height: 16, width: 16,
@@ -501,6 +637,7 @@ class _DataState extends State<Data> {
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
+                      filled: true,
                       counterText: "",
                       focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.red, width: 1.0),
@@ -660,6 +797,7 @@ class _DataState extends State<Data> {
                 ],
               ),
             ),
+
             //save toggle
             Row(
               children: [
@@ -675,6 +813,7 @@ class _DataState extends State<Data> {
                     }),
               ],
             ),
+
             //saved number
             Expanded(
               child: ClipRRect(
@@ -730,13 +869,24 @@ class _DataState extends State<Data> {
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          activeIndex = savedNumbers[index].providerIndex;
-                                          phoneController.text = savedNumbers[index].number;
-                                          phone = int.parse(savedNumbers[index].number);
-                                          phoneNum = savedNumbers[index].number;
-                                          hasNumber = true;
-                                          selectedProvider = true;
-                                          validateForm();
+                                          if(activeIndex == savedNumbers[index].providerIndex){
+                                            activeIndex = savedNumbers[index].providerIndex;
+                                            phoneController.text = savedNumbers[index].number;
+                                            phone = int.parse(savedNumbers[index].number);
+                                            phoneNum = savedNumbers[index].number;
+                                            hasNumber = true;
+                                            selectedProvider = true;
+                                            validateForm();
+                                          }else{
+                                            activeIndex = savedNumbers[index].providerIndex;
+                                            phoneController.text = savedNumbers[index].number;
+                                            phone = int.parse(savedNumbers[index].number);
+                                            phoneNum = savedNumbers[index].number;
+                                            hasNumber = true;
+                                            selectedProvider = true;
+                                            selectedService = false;
+                                            validateForm();
+                                          }
                                         });
                                       },
                                       child: Padding(
@@ -817,6 +967,7 @@ class _DataState extends State<Data> {
             const SizedBox(
               height: 16,
             ),
+
             //Buy airtime button
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -826,11 +977,7 @@ class _DataState extends State<Data> {
                     child: ElevatedButton(
                       onPressed: isReady
                           ? () {
-                              if (saveNumber) {
-                                saveNewNumber();
-                              } else {
-                                updateUseTime();
-                              }
+                              confirmTransaction();
                             }
                           : null,
                       style: ButtonStyle(

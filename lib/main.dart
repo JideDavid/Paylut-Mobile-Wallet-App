@@ -7,6 +7,9 @@ import 'package:paylut/Screens/auth_screen.dart';
 import 'package:paylut/Screens/home_screen.dart';
 import 'package:paylut/Screens/onboarding.dart';
 import 'package:paylut/services/pref_helper.dart';
+import 'package:paylut/services/settings_provider.dart';
+import 'package:paylut/services/user_details_provider.dart';
+import 'package:provider/provider.dart';
 import 'models/user_model.dart';
 
 void main() async{
@@ -15,7 +18,11 @@ void main() async{
     DeviceOrientation.portraitUp
   ]);
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider<UserDetailsProvider>(create: (_) => UserDetailsProvider()),
+    ChangeNotifierProvider<SettingsProvider>(create: (_) => SettingsProvider())
+  ],
+  child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -71,13 +78,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getAppFresh();
+    context.read<SettingsProvider>().getSaveTheme();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Paylut",
-      themeMode: ThemeMode.system,
+      themeMode: context.watch<SettingsProvider>().themeMode,
       theme: ThemeData(
           scaffoldBackgroundColor: Colors.white.withOpacity(0.97),
           primarySwatch: buildMaterialColor(const Color(0xffe91e63)),
@@ -106,10 +114,10 @@ class _MyAppState extends State<MyApp> {
         appBarTheme: const AppBarTheme(elevation: 0, titleTextStyle: TextStyle(fontSize: 15)),
         floatingActionButtonTheme:
             const FloatingActionButtonThemeData(backgroundColor: Colors.deepPurple),
-        colorScheme: const ColorScheme.dark(
+        colorScheme:  ColorScheme.dark(
           background: Colors.black,
-
-        )
+        ),
+        textTheme: TextTheme()
       ),
       home: appFresh ? const OnBoarding()
       : FutureBuilder(
@@ -120,7 +128,7 @@ class _MyAppState extends State<MyApp> {
             return const AuthScreen();
           }
         },
-        initialData: const Scaffold(
+        initialData: Scaffold(
           body: Center(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

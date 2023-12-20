@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "940672739087-g3hnrdhg1700v2v8c3oor1c6abdv3fnp.apps.googleusercontent.com",
+          "client_id": "940672739087-jaj6nihh2gaoiq9hda51f9vl17ect3ef.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.zalelstudios.paylut",
@@ -22,7 +22,15 @@
           }
         },
         {
-          "client_id": "940672739087-9ijs20n5v48u8eg6fbvs6iea7f3jaaqv.apps.googleusercontent.com",
+          "client_id": "940672739087-o9nmu0j0u7ab2enren8i604d0rhuocki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zalelstudios.paylut",
+            "certificate_hash": "5cbb30493e2b60b9de97ea6fc31aadac4d37f457"
+          }
+        },
+        {
+          "client_id": "940672739087-nm25npffn7db7jrm1vjmi24nrf11jnn5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

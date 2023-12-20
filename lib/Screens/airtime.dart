@@ -32,6 +32,7 @@ class _AirtimeState extends State<Airtime> {
   bool selectedProvider = false;
   bool isReady = false;
   List<Number> savedNumbers = [];
+  bool processing = false;
 
   TextStyle heading = const TextStyle(
     fontWeight: FontWeight.bold,
@@ -184,16 +185,16 @@ class _AirtimeState extends State<Airtime> {
                         height: 16,
                       ),
                       Text(
-                        'Do you want to remove this number -- ${savedNumbers[index].number}, with alias -- ${savedNumbers[index].alias} ?',
+                        'Do you want to remove ${savedNumbers[index].number}, with alias -- ${savedNumbers[index].alias} ?',
                         style: const TextStyle(),
                         textAlign:
                         TextAlign.center,
                       )
                     ])),
             actions: [
-              Row(
+              Row (
                 mainAxisAlignment:
-                MainAxisAlignment.end,
+                MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                       onPressed: () {
@@ -267,6 +268,130 @@ class _AirtimeState extends State<Airtime> {
 
   }
 
+  confirmTransaction() async{
+
+    showDialog(
+      barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              //backgroundColor: Colors.green,
+              title: const Row(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Confirm Buy Airtime',
+                    style: TextStyle(
+                        color: Colors.red),
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                  height: 100,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        processing ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 15, width: 15,
+                            child: CircularProgressIndicator( color: Colors.red, strokeWidth: 2,),)
+                            ,SizedBox(width: 8,),
+                            Text('Processing...')
+                          ],
+                        )
+                        : Text(
+                          'Confirm airtime purchase of $amount NGN to $phoneNum?',
+                          style: const TextStyle(),
+                          textAlign:
+                          TextAlign.center,
+                        )
+                      ])),
+              actions: [
+                Visibility(
+                  visible: !processing,
+                  child: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      //cancel button
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop();
+                          },
+                          child: const Center(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons
+                                      .cancel_outlined,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      color: Colors
+                                          .grey),
+                                ),
+                              ],
+                            ),
+                          )),
+                      //confirm buy airtime button
+                      TextButton(
+                          onPressed: () {
+                            buyAirtimeAction();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Center(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons
+                                      .check_circle_outline,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  'Confirm',
+                                  style: TextStyle(
+                                      color: Colors
+                                          .grey),
+                                ),
+                              ],
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+
+  }
+
+  buyAirtimeAction() async{
+    setState(() {processing = true;});
+    //await Future.delayed(const Duration(seconds: 3));
+    if(saveNumber){
+      await saveNewNumber();
+    }else{
+      await updateUseTime();
+    }
+    setState(() {processing = false;});
+  }
+
+
+
   @override
   void initState() {
     super.initState();
@@ -302,7 +427,19 @@ class _AirtimeState extends State<Airtime> {
         elevation: 0,
         backgroundColor: Colors.black.withOpacity(0),
       ),
-      body: Padding(
+      body: processing ? const Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          SizedBox(
+            height: 15, width: 15,
+            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red,),
+          ),
+            SizedBox(width: 8,),
+            Text('Processing...')
+        ],),
+      )
+          : Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
@@ -335,6 +472,7 @@ class _AirtimeState extends State<Airtime> {
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
+                filled: true,
                 counterText: "",
                 focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.red, width: 1.0),
@@ -373,6 +511,7 @@ class _AirtimeState extends State<Airtime> {
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
+                filled: true,
                 counterText: "",
                 focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.red, width: 1.0),
@@ -389,28 +528,33 @@ class _AirtimeState extends State<Airtime> {
             //number alias text field
             Visibility(
               visible: saveNumber,
-              child: TextField(
-                controller: aliasController,
-                onChanged: (value) {
-                  alias = value;
-                },
-                maxLength: 11,
-                keyboardType: TextInputType.text,
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  counterText: "",
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.red, width: 1.0),
-                      borderRadius: BorderRadius.circular(20)),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                      borderRadius: BorderRadius.circular(20)),
-                  hintText: 'Enter alias for number',
-                ),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: aliasController,
+                    onChanged: (value) {
+                      alias = value;
+                    },
+                    maxLength: 11,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      filled: true,
+                      counterText: "",
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.red, width: 1.0),
+                          borderRadius: BorderRadius.circular(20)),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                          borderRadius: BorderRadius.circular(20)),
+                      hintText: 'Enter alias for number',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 16,
             ),
             //provider list
             SizedBox(
@@ -689,12 +833,8 @@ class _AirtimeState extends State<Airtime> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: isReady ? () {
-                        if(saveNumber){
-                          saveNewNumber();
-                        }else{
-                          updateUseTime();
-                        }
+                      onPressed: isReady  ? () async {
+                        await confirmTransaction();
                       } : null,
                       style: ButtonStyle(
                           backgroundColor: isReady

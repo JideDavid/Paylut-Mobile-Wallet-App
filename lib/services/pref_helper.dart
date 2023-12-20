@@ -45,4 +45,18 @@ class PrefHelper{
 
   }
 
+  void setAppThemeMode(bool value) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('themeMode', value);
+  }
+
+  Future<bool?> getAppThemeMode() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getBool('themeMode') == null ){
+      return true;
+    }else{
+      return prefs.getBool('themeMode');
+    }
+  }
+
 }

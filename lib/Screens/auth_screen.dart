@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
     else {
       //generating wallet tag using the combination of username and generated seven alphanumeric keys
       var username = (userCredential.user!.displayName)?.replaceAll(' ', '');
-      var walletTag = "$username${Nonce.generate(7, Random.secure())}";
+      var walletTag = "$username${Nonce.generate(length: 7, secure: true)}";
       //saving user credential in firestore
       await firestore.collection('users').doc(userCredential.user!.uid).set({
         'email': userCredential.user!.email,
@@ -75,7 +74,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void showLogoTimer(){
-    Future.delayed(const Duration(seconds: 3),(){
+    Future.delayed(const Duration(seconds: 5),(){
       if(mounted){
         setState(() {
           showLogo = false;
@@ -95,7 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return Scaffold(
       body: SafeArea(child: Center(
         child: showLogo ? Center(
-          child: Image.asset('lib/icons/paylut_logo.png', height: 100,),
+          child: Image.asset('lib/icons/paylut_logo_anim.gif', height: 120,),
         )
             : Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
