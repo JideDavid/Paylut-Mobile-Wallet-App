@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:paylut/models/user_model.dart';
-import '../Screens/claim_vault_win.dart';
+import '../View/claim_vault_win.dart';
 
 class BronzeVaultResult extends StatefulWidget {
   final UserDetails userDetails;

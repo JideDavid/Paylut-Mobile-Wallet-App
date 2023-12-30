@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:paylut/Screens/auth_screen.dart';
-import 'package:paylut/Screens/home_screen.dart';
-import 'package:paylut/Screens/onboarding.dart';
+import 'package:paylut/View/auth_screen.dart';
+import 'package:paylut/View/home_screen.dart';
+import 'package:paylut/View/onboarding.dart';
 import 'package:paylut/services/pref_helper.dart';
 import 'package:paylut/services/settings_provider.dart';
 import 'package:paylut/services/user_details_provider.dart';
@@ -41,7 +41,6 @@ class _MyAppState extends State<MyApp> {
     User? user = FirebaseAuth.instance.currentUser;
     DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
 
-    //extraction converting data from snapshot to object not working
     UserDetails userDetails = UserDetails.fromJson(userData);
 
     return Home(userDetails: userDetails,);

@@ -1,19 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:paylut/Screens/cable_tv.dart';
-import 'package:paylut/Screens/electricity.dart';
+import 'package:paylut/View/cable_tv.dart';
+import 'package:paylut/View/electricity.dart';
 import 'package:paylut/models/gift_model.dart';
 import 'package:paylut/models/user_model.dart';
 import 'package:paylut/widgets/gift_item.dart';
 import 'package:paylut/widgets/service_card.dart';
-import '../Screens/airtime.dart';
-import '../Screens/betting.dart';
-import '../Screens/data.dart';
-import '../Screens/education.dart';
-import '../Screens/gift_card.dart';
-import '../Screens/gift_friend.dart';
-import '../Screens/internet.dart';
+import '../View/airtime.dart';
+import '../View/betting.dart';
+import '../View/data.dart';
+import '../View/education.dart';
+import '../View/gift_card.dart';
+import '../View/gift_friend.dart';
+import '../View/internet.dart';
 
 class PayBody extends StatefulWidget {
   final UserDetails userDetails;

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:paylut/Screens/vault_winners.dart';
+import 'package:paylut/View/vault_winners.dart';
 import 'package:paylut/models/user_model.dart';
 
 class BronzeVaultEntry extends StatefulWidget {
@@ -527,10 +527,17 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
   @override
   Widget build(BuildContext context) {
 
-    double sw = MediaQuery.of(context).size.width;
+    //double sw = MediaQuery.of(context).size.width;
     double sh = MediaQuery.of(context).size.height;
+
+
+    ///
+    /// body root
+    ///
     return Stack(
       children: [
+
+        ///entry section
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: SingleChildScrollView(
@@ -540,7 +547,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
               Expanded(
                 child: Column(
                   children: [
-                    //Amount Section
+
+                    ///Amount Section
                     SizedBox(
                       child: TextField(
                         controller: amountController,
@@ -577,7 +585,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
                     const SizedBox(
                       height: 16,
                     ),
-                    //possible earning
+
+                    ///possible earning
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -650,261 +659,265 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
                     const SizedBox(
                       height: 16,
                     ),
-                    //number selection & preview
+
+                    ///number selection & preview
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          color: Colors.red.withOpacity(0.1),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.deepPurple[700],
-                                    borderRadius: BorderRadius.circular(0),
-                                    image: const DecorationImage(
-                                        image: AssetImage("assets/patterns/dotPattern.png"),
-                                        fit: BoxFit.cover),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      const Text(
-                                        "crack codes",
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        children: [
-                                          //numbers
-                                          Expanded(
-                                              flex: 4,
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  //number cards
-                                                  //number 1
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: isScrolling1
-                                                                ? Colors.red
-                                                                : Colors.white,
-                                                            width: isScrolling1 ? 3 : 1),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          number1.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
+                        child: Column(
+                          children: [
+                            
+                            ///numbers preview and stats
+                            Expanded(
+                              flex: 4,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.deepPurple[700],
+                                  borderRadius: BorderRadius.circular(0),
+                                  image: const DecorationImage(
+                                      image: AssetImage("assets/patterns/dotPattern.png"),
+                                      fit: BoxFit.cover),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    const Text(
+                                      "crack codes",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    Row(
+                                      children: [
+                                        //numbers
+                                        Expanded(
+                                            flex: 4,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                //number cards
+                                                //number 1
+                                                Container(
+                                                  height: 50,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isScrolling1
+                                                              ? Colors.red
+                                                              : Colors.white,
+                                                          width: isScrolling1 ? 3 : 1),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        number1.toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            fontSize: 16,
+                                                            color: Colors.white),
+                                                      )
+                                                    ],
                                                   ),
-                                                  const SizedBox(
-                                                    width: 8,
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                //number2
+                                                Container(
+                                                  height: 50,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isScrolling2
+                                                              ? Colors.red
+                                                              : Colors.white,
+                                                          width: isScrolling2 ? 3 : 1),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        number2.toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            fontSize: 16,
+                                                            color: Colors.white),
+                                                      )
+                                                    ],
                                                   ),
-                                                  //number2
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: isScrolling2
-                                                                ? Colors.red
-                                                                : Colors.white,
-                                                            width: isScrolling2 ? 3 : 1),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          number2.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                //number3
+                                                Container(
+                                                  height: 50,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isScrolling3
+                                                              ? Colors.red
+                                                              : Colors.white,
+                                                          width: isScrolling3 ? 3 : 1),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        number3.toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            fontSize: 16,
+                                                            color: Colors.white),
+                                                      )
+                                                    ],
                                                   ),
-                                                  const SizedBox(
-                                                    width: 8,
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                //number4
+                                                Container(
+                                                  height: 50,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isScrolling4
+                                                              ? Colors.red
+                                                              : Colors.white,
+                                                          width: isScrolling4 ? 3 : 1),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        number4.toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            fontSize: 16,
+                                                            color: Colors.white),
+                                                      )
+                                                    ],
                                                   ),
-                                                  //number3
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: isScrolling3
-                                                                ? Colors.red
-                                                                : Colors.white,
-                                                            width: isScrolling3 ? 3 : 1),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          number3.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                //number5
+                                                Container(
+                                                  height: 50,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isScrolling5
+                                                              ? Colors.red
+                                                              : Colors.white,
+                                                          width: isScrolling5 ? 3 : 1),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        number5.toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            fontSize: 16,
+                                                            color: Colors.white),
+                                                      )
+                                                    ],
                                                   ),
-                                                  const SizedBox(
-                                                    width: 8,
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                //number6
+                                                Container(
+                                                  height: 50,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isScrolling6
+                                                              ? Colors.red
+                                                              : Colors.white,
+                                                          width: isScrolling6 ? 3 : 1),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        number6.toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            fontSize: 16,
+                                                            color: Colors.white),
+                                                      )
+                                                    ],
                                                   ),
-                                                  //number4
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: isScrolling4
-                                                                ? Colors.red
-                                                                : Colors.white,
-                                                            width: isScrolling4 ? 3 : 1),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          number4.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                //number7
+                                                Container(
+                                                  height: 50,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: isScrolling7
+                                                              ? Colors.red
+                                                              : Colors.white,
+                                                          width: isScrolling7 ? 3 : 1),
+                                                      borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        number7.toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            fontSize: 16,
+                                                            color: Colors.white),
+                                                      )
+                                                    ],
                                                   ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number5
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: isScrolling5
-                                                                ? Colors.red
-                                                                : Colors.white,
-                                                            width: isScrolling5 ? 3 : 1),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          number5.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number6
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: isScrolling6
-                                                                ? Colors.red
-                                                                : Colors.white,
-                                                            width: isScrolling6 ? 3 : 1),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          number6.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  //number7
-                                                  Container(
-                                                    height: 50,
-                                                    width: 35,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: isScrolling7
-                                                                ? Colors.red
-                                                                : Colors.white,
-                                                            width: isScrolling7 ? 3 : 1),
-                                                        borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          number7.toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight: FontWeight.normal,
-                                                              fontSize: 16,
-                                                              color: Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ))
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "lib/icons/naira.png",
-                                            color: Colors.white,
-                                            scale: 30,
-                                          ),
-                                          Text(
-                                            vaultAmount.toString(),
-                                            style: const TextStyle(color: Colors.white, fontSize: 20),
-                                          ),
-                                        ],
-                                      ),
-                                      const Text(
-                                        "amount in vault",
-                                        style: TextStyle(color: Colors.white, fontSize: 10),
-                                      ),
-                                    ],
-                                  ),
+                                                ),
+                                              ],
+                                            ))
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "lib/icons/naira.png",
+                                          color: Colors.white,
+                                          scale: 30,
+                                        ),
+                                        Text(
+                                          vaultAmount.toString(),
+                                          style: const TextStyle(color: Colors.white, fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    const Text(
+                                      "amount in vault",
+                                      style: TextStyle(color: Colors.white, fontSize: 10),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              //number picker section
-                              Expanded(
-                                flex: 6,
+                            ),
+
+                            ///number picker section
+                            Expanded(
+                              flex: 4,
+                              child: Container(
+                                color: Colors.red.withOpacity(0.1),
                                 child: Stack(alignment: AlignmentDirectional.center, children: [
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1224,8 +1237,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
                                   ),
                                 ]),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -1263,6 +1276,8 @@ class _BronzeVaultEntryState extends State<BronzeVaultEntry> {
             ),
           ),
         ),
+
+        ///cant make entry overlay
         Visibility(
           visible: canPlay ? false : true,
           child: Container(

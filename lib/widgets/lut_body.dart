@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:paylut/Screens/silver_vault.dart';
-import 'package:paylut/Screens/spin_wheel.dart';
+import 'package:paylut/View/silver_vault.dart';
+import 'package:paylut/View/spin_wheel.dart';
 import 'package:paylut/models/user_model.dart';
-import '../Screens/bronze_vault.dart';
-import '../Screens/golden_vault.dart';
+import '../View/bronze_vault.dart';
+import '../View/golden_vault.dart';
 import 'game_card.dart';
 
 class LotteryBody extends StatefulWidget {

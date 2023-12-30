@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:paylut/Screens/vault_winners.dart';
+import 'vault_winners.dart';
 import 'package:paylut/models/user_model.dart';
 
 class ClaimVaultWin extends StatefulWidget {

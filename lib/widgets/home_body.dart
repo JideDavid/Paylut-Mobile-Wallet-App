@@ -3,19 +3,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:paylut/Screens/airtime.dart';
-import 'package:paylut/Screens/vault_winners.dart';
-import 'package:paylut/Screens/cable_tv.dart';
-import 'package:paylut/Screens/data.dart';
-import 'package:paylut/Screens/fund_wallet.dart';
-import 'package:paylut/Screens/gift_card.dart';
-import 'package:paylut/Screens/wallet_history.dart';
+import 'package:paylut/View/airtime.dart';
+import 'package:paylut/View/vault_winners.dart';
+import 'package:paylut/View/cable_tv.dart';
+import 'package:paylut/View/data.dart';
+import 'package:paylut/View/fund_wallet.dart';
+import 'package:paylut/View/gift_card.dart';
+import 'package:paylut/View/wallet_history.dart';
 import 'package:paylut/models/user_model.dart';
 import 'package:paylut/services/pref_helper.dart';
 import 'package:paylut/widgets/lottery_card.dart';
 import 'package:paylut/widgets/service_card.dart';
-import '../Screens/transfer.dart';
-import '../Screens/withdraw.dart';
+import '../View/transfer.dart';
+import '../View/withdraw.dart';
 
 class HomeBody extends StatefulWidget {
   final UserDetails userDetails;
@@ -47,7 +47,7 @@ class _HomeBodyState extends State<HomeBody> {
   bool todayResults = false;
   DateTime date = DateTime.now();
   int transitionTime = 300;
-  List<double> scales = [0.8,0.8,0.8];
+  List<double> scales = [0.8, 0.8, 0.8];
 
   Future<void> switchVaultAmount() async {
     for (int i = 1; i < 1000; i++) {
@@ -76,12 +76,14 @@ class _HomeBodyState extends State<HomeBody> {
   }
 
   Future<void> updateBalance() async {
-    DocumentSnapshot snapshot =
-        await FirebaseFirestore.instance.collection('users').doc(userDetails.uid).get();
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userDetails.uid)
+        .get();
     int balance = snapshot.get('walletBalance');
     newBalance = balance;
     updatedBalance = true;
-    if(mounted){
+    if (mounted) {
       setState(() {});
     }
   }
@@ -285,8 +287,7 @@ class _HomeBodyState extends State<HomeBody> {
       }
     }
 
-
-    if(mounted){
+    if (mounted) {
       setState(() {});
     }
   }
@@ -298,19 +299,23 @@ class _HomeBodyState extends State<HomeBody> {
     //switchVaultAmount();
     updateBalance();
     updateVaultResults();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
-        scales[0] = 1;
-        if(mounted){
-          setState(() {});
-        }
-        await Future.delayed(const Duration(milliseconds: 50), (){scales[1] = 1;});
-        if(mounted){
-          setState(() {});
-        }
-        await Future.delayed(const Duration(milliseconds: 50), (){scales[2] = 1;});
-        if(mounted){
-          setState(() {});
-        }
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      scales[0] = 1;
+      if (mounted) {
+        setState(() {});
+      }
+      await Future.delayed(const Duration(milliseconds: 50), () {
+        scales[1] = 1;
+      });
+      if (mounted) {
+        setState(() {});
+      }
+      await Future.delayed(const Duration(milliseconds: 50), () {
+        scales[2] = 1;
+      });
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -321,7 +326,9 @@ class _HomeBodyState extends State<HomeBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //Wallet section
+          ///
+          ///Wallet section
+          ///
           AnimatedScale(
             duration: Duration(milliseconds: transitionTime),
             scale: scales[0],
@@ -329,7 +336,7 @@ class _HomeBodyState extends State<HomeBody> {
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 width: double.infinity,
-                height: sw/3,
+                height: sw / 3,
                 decoration: const BoxDecoration(
                   color: Color(0xff861bf2),
                   image: DecorationImage(
@@ -359,16 +366,20 @@ class _HomeBodyState extends State<HomeBody> {
                                       //toggle balance visibility
                                       setState(() {
                                         if (showBalance) {
-                                          PrefHelper().setBalanceVisibility(false);
+                                          PrefHelper()
+                                              .setBalanceVisibility(false);
                                           getPreferences();
                                         } else {
-                                          PrefHelper().setBalanceVisibility(true);
+                                          PrefHelper()
+                                              .setBalanceVisibility(true);
                                           getPreferences();
                                         }
                                       });
                                     },
                                     icon: Icon(
-                                      showBalance ? Icons.visibility : Icons.visibility_off,
+                                      showBalance
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
                                       color: Colors.white,
                                     )),
                               ],
@@ -378,7 +389,8 @@ class _HomeBodyState extends State<HomeBody> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => WalletFundHistory(
+                                          builder: (context) =>
+                                              WalletFundHistory(
                                                 userDetails: userDetails,
                                               )));
                                 },
@@ -403,26 +415,32 @@ class _HomeBodyState extends State<HomeBody> {
                           children: [
                             gotVisibility
                                 ? Expanded(
-                                  child: Row(
+                                    child: Row(
                                       children: [
                                         Visibility(
                                           visible: showBalance,
                                           child: Image.asset(
                                             "lib/icons/naira.png",
-                                            scale:24,
+                                            scale: 24,
                                             color: Colors.white,
                                           ),
                                         ),
-
                                         StreamBuilder<QuerySnapshot>(
-                                            stream:
-                                                FirebaseFirestore.instance.collection('users').snapshots(),
+                                            stream: FirebaseFirestore.instance
+                                                .collection('users')
+                                                .snapshots(),
                                             builder: (BuildContext context,
-                                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                                return const SizedBox( width: 15, height: 15,
-                                                  child: CircularProgressIndicator(
-                                                    strokeWidth: 2, color: Colors.red,
+                                                AsyncSnapshot<QuerySnapshot>
+                                                    snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const SizedBox(
+                                                  width: 15,
+                                                  height: 15,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color: Colors.red,
                                                   ),
                                                 );
                                               }
@@ -430,15 +448,20 @@ class _HomeBodyState extends State<HomeBody> {
                                               if (snapshot.hasData) {
                                                 var col = snapshot.data!;
                                                 for (var doc in col.docs) {
-                                                  if (doc.id == userDetails.uid) {
+                                                  if (doc.id ==
+                                                      userDetails.uid) {
                                                     return Expanded(
                                                       child: Text(
                                                         showBalance
-                                                            ? f.format(doc['walletBalance'])
+                                                            ? f.format(doc[
+                                                                'walletBalance'])
                                                             : "*****",
                                                         style: const TextStyle(
-                                                            fontSize: 25, color: Colors.white),
-                                                        overflow: TextOverflow.ellipsis,
+                                                            fontSize: 25,
+                                                            color:
+                                                                Colors.white),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     );
                                                   }
@@ -446,12 +469,14 @@ class _HomeBodyState extends State<HomeBody> {
                                               }
                                               return Text(
                                                 showBalance ? '0.00' : "*****",
-                                                style: const TextStyle(fontSize: 30, color: Colors.white),
+                                                style: const TextStyle(
+                                                    fontSize: 30,
+                                                    color: Colors.white),
                                               );
                                             }),
                                       ],
                                     ),
-                                )
+                                  )
                                 : const CircularProgressIndicator(),
                             Row(
                               children: [
@@ -460,10 +485,12 @@ class _HomeBodyState extends State<HomeBody> {
                                       setState(() {
                                         if (walletAction < 3) {
                                           walletAction++;
-                                          PrefHelper().setLastWalletAction(walletAction);
+                                          PrefHelper().setLastWalletAction(
+                                              walletAction);
                                         } else {
                                           walletAction = 1;
-                                          PrefHelper().setLastWalletAction(walletAction);
+                                          PrefHelper().setLastWalletAction(
+                                              walletAction);
                                         }
                                       });
                                     },
@@ -482,7 +509,9 @@ class _HomeBodyState extends State<HomeBody> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      FundWallet(userDetails: userDetails)));
+                                                      FundWallet(
+                                                          userDetails:
+                                                              userDetails)));
                                         }
                                       : walletAction == 2
                                           ? () {
@@ -490,27 +519,38 @@ class _HomeBodyState extends State<HomeBody> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          Transfer(userDetails: userDetails)));
+                                                          Transfer(
+                                                              userDetails:
+                                                                  userDetails)));
                                             }
                                           : () {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          Withdraw(userDetails: userDetails)));
+                                                          Withdraw(
+                                                              userDetails:
+                                                                  userDetails)));
                                             },
                                   style: ButtonStyle(
-                                      backgroundColor: const MaterialStatePropertyAll(Colors.white),
-                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      backgroundColor:
+                                          const MaterialStatePropertyAll(
+                                              Colors.white),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(18.0),
+                                          borderRadius:
+                                              BorderRadius.circular(18.0),
                                         ),
                                       )),
-                                  child: Text(walletAction == 1
-                                      ? "Add Fund"
-                                      : walletAction == 2
-                                          ? "Transfer"
-                                          : "Withdraw", style: const TextStyle(color: Colors.red),),
+                                  child: Text(
+                                    walletAction == 1
+                                        ? "Add Fund"
+                                        : walletAction == 2
+                                            ? "Transfer"
+                                            : "Withdraw",
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
                                 )
                               ],
                             )
@@ -523,22 +563,30 @@ class _HomeBodyState extends State<HomeBody> {
                         children: [
                           GestureDetector(
                               onTap: () {
-                                  //FlutterClipboard.copy(userDetails.walletTag);
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                    content: Text(
-                                      'Wallet tag copied to clipboard',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    duration: Duration(seconds: 1),
-                                    backgroundColor: Colors.red,
-                                  ));
+                                //FlutterClipboard.copy(userDetails.walletTag);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text(
+                                    'Wallet tag copied to clipboard',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  duration: Duration(seconds: 1),
+                                  backgroundColor: Colors.red,
+                                ));
                               },
                               child: Row(
                                 children: [
                                   Text("Tag: ${userDetails.walletTag}",
-                                      style: const TextStyle(color: Colors.white)),
-                                  const SizedBox(width: 4,),
-                                  const Icon(Icons.copy, color: Colors.white, size: 15,)
+                                      style:
+                                          const TextStyle(color: Colors.white)),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                                  const Icon(
+                                    Icons.copy,
+                                    color: Colors.white,
+                                    size: 15,
+                                  )
                                 ],
                               )),
                           GestureDetector(
@@ -558,7 +606,8 @@ class _HomeBodyState extends State<HomeBody> {
                                         : vaultPreviewIndex == 2
                                             ? "silver vault"
                                             : "golden vault",
-                                    style: const TextStyle(color: Colors.white, fontSize: 10)),
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 10)),
                                 const SizedBox(
                                   width: 8,
                                 ),
@@ -568,7 +617,8 @@ class _HomeBodyState extends State<HomeBody> {
                                         : vaultPreviewIndex == 2
                                             ? silverVaultAmount
                                             : goldenVaultAmount),
-                                    style: const TextStyle(color: Colors.white)),
+                                    style:
+                                        const TextStyle(color: Colors.white)),
                               ],
                             ),
                           ),
@@ -586,10 +636,12 @@ class _HomeBodyState extends State<HomeBody> {
             height: 24,
           ),
 
-          //Quick action section
+          ///
+          ///Quick action section
+          ///
           AnimatedScale(
             scale: scales[1],
-            duration: Duration(milliseconds: transitionTime ),
+            duration: Duration(milliseconds: transitionTime),
             child: SizedBox(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -645,7 +697,9 @@ class _HomeBodyState extends State<HomeBody> {
             height: 24,
           ),
 
-          //Lottery winning numbers Section
+          ///
+          ///Lottery winning numbers Section
+          ///
           AnimatedScale(
             scale: scales[2],
             duration: Duration(milliseconds: transitionTime),
@@ -659,7 +713,8 @@ class _HomeBodyState extends State<HomeBody> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     Text(todayResults ? "(Today)" : "(Yesterday)",
-                        style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey)),
                   ],
                 ),
                 GestureDetector(
@@ -667,14 +722,16 @@ class _HomeBodyState extends State<HomeBody> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (BuildContext context) => VaultWinners( date: date,)));
+                            builder: (BuildContext context) => VaultWinners(
+                                  date: date,
+                                )));
                   },
                   child: Column(
                     children: [
                       const SizedBox(
                         height: 8,
                       ),
-                      //bronze card
+                      ///bronze card
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
@@ -683,50 +740,108 @@ class _HomeBodyState extends State<HomeBody> {
                           color: Colors.grey.withOpacity(0.2),
                           child: Column(
                             children: [
-                              Stack(
-                                alignment: Alignment.center,
-                                  children: [
-                                Image.asset('assets/backgrounds/tagBase.png', color: Colors.red[700], scale: 3,),
-                                Text('Golden', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+
+                              ///top label
+                              Stack(alignment: Alignment.center, children: [
+                                Image.asset(
+                                  'assets/backgrounds/tagBase.png',
+                                  color: Colors.red[700],
+                                  scale: 4,
+                                ),
+                                Text(
+                                  'Bronze',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ]),
+
+                              SizedBox(height: 12,),
+
+                              ///result cards
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  //number cards
                                   LotteryCard(
-                                      number: bronzeCodes[0], cardColor: Colors.red.withOpacity(0.2)),
+                                      number: bronzeCodes[0],
+                                      cardColor: Colors.red.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: bronzeCodes[1], cardColor: Colors.red.withOpacity(0.2)),
+                                      number: bronzeCodes[1],
+                                      cardColor: Colors.red.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: bronzeCodes[2], cardColor: Colors.red.withOpacity(0.2)),
+                                      number: bronzeCodes[2],
+                                      cardColor: Colors.red.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: bronzeCodes[3], cardColor: Colors.red.withOpacity(0.2)),
+                                      number: bronzeCodes[3],
+                                      cardColor: Colors.red.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: bronzeCodes[4], cardColor: Colors.red.withOpacity(0.2)),
+                                      number: bronzeCodes[4],
+                                      cardColor: Colors.red.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: bronzeCodes[5], cardColor: Colors.red.withOpacity(0.2)),
+                                      number: bronzeCodes[5],
+                                      cardColor: Colors.red.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: bronzeCodes[6], cardColor: Colors.red.withOpacity(0.2)),
+                                      number: bronzeCodes[6],
+                                      cardColor: Colors.red.withOpacity(0.2)),
                                 ],
                               ),
+
+                              ///info
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Players: ",
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 12),
+                                        ),
+                                        Text(
+                                          "00",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Amount: ",
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 12),
+                                        ),
+                                        Text(
+                                          "1,000,000",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -734,7 +849,7 @@ class _HomeBodyState extends State<HomeBody> {
                       const SizedBox(
                         height: 8,
                       ),
-                      //ocean card
+                      ///silver card
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
@@ -743,40 +858,102 @@ class _HomeBodyState extends State<HomeBody> {
                           color: Colors.grey.withOpacity(0.2),
                           child: Column(
                             children: [
-                              Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Image.asset('assets/backgrounds/tagBase.png', color: Colors.red[700], scale: 3,),
-                                    Text('Silver', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                  ]),
+
+                              ///top label
+                              Stack(alignment: Alignment.center, children: [
+                                Image.asset(
+                                  'assets/backgrounds/tagBase.png',
+                                  color: Colors.red[700],
+                                  scale: 4,
+                                ),
+                                Text(
+                                  'Silver',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ]),
+
+                              SizedBox(height: 12,),
+
+                              ///result cards
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   //number cards
                                   LotteryCard(
-                                      number: silverCodes[0], cardColor: Colors.yellow.withOpacity(0.3)),
+                                      number: silverCodes[0],
+                                      cardColor:
+                                          Colors.yellow.withOpacity(0.3)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: silverCodes[1], cardColor: Colors.yellow.withOpacity(0.3)),
+                                      number: silverCodes[1],
+                                      cardColor:
+                                          Colors.yellow.withOpacity(0.3)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: silverCodes[2], cardColor: Colors.yellow.withOpacity(0.3)),
+                                      number: silverCodes[2],
+                                      cardColor:
+                                          Colors.yellow.withOpacity(0.3)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: silverCodes[3], cardColor: Colors.yellow.withOpacity(0.3)),
+                                      number: silverCodes[3],
+                                      cardColor:
+                                          Colors.yellow.withOpacity(0.3)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: silverCodes[4], cardColor: Colors.yellow.withOpacity(0.3)),
+                                      number: silverCodes[4],
+                                      cardColor:
+                                          Colors.yellow.withOpacity(0.3)),
                                 ],
                               ),
+
+                              ///info
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Players: ",
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 12),
+                                        ),
+                                        Text(
+                                          "00",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Amount: ",
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 12),
+                                        ),
+                                        Text(
+                                          "1,000,000",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -784,7 +961,8 @@ class _HomeBodyState extends State<HomeBody> {
                       const SizedBox(
                         height: 8,
                       ),
-                      //classic card
+
+                      ///golden card
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
@@ -793,30 +971,85 @@ class _HomeBodyState extends State<HomeBody> {
                           color: Colors.grey.withOpacity(0.2),
                           child: Column(
                             children: [
-                              Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Image.asset('assets/backgrounds/tagBase.png', color: Colors.red[700], scale: 3,),
-                                    Text('Bronze', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                  ]),
+
+                              ///top label
+                              Stack(alignment: Alignment.center, children: [
+                                Image.asset(
+                                  'assets/backgrounds/tagBase.png',
+                                  color: Colors.red[700],
+                                  scale: 4,
+                                ),
+                                Text(
+                                  'Golden',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ]),
+
+                              SizedBox(height: 12,),
+
+                              ///result cards
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   //number cards
                                   LotteryCard(
-                                      number: goldenCodes[0], cardColor: Colors.green.withOpacity(0.2)),
+                                      number: goldenCodes[0],
+                                      cardColor: Colors.green.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: goldenCodes[1], cardColor: Colors.green.withOpacity(0.2)),
+                                      number: goldenCodes[1],
+                                      cardColor: Colors.green.withOpacity(0.2)),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   LotteryCard(
-                                      number: goldenCodes[2], cardColor: Colors.green.withOpacity(0.2)),
+                                      number: goldenCodes[2],
+                                      cardColor: Colors.green.withOpacity(0.2)),
                                 ],
                               ),
+
+                              ///info
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Players: ",
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 12),
+                                        ),
+                                        Text(
+                                          "00",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Amount: ",
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 12),
+                                        ),
+                                        Text(
+                                          "1,000,000",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -827,11 +1060,9 @@ class _HomeBodyState extends State<HomeBody> {
                     ],
                   ),
                 )
-
               ],
             ),
           ),
-
         ],
       ),
     );
