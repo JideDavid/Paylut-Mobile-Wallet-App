@@ -54,7 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
     else {
       //generating wallet tag using the combination of username and generated seven alphanumeric keys
       var username = (userCredential.user!.displayName)?.replaceAll(' ', '');
-      var walletTag = "$username${Nonce.generate(length: 7, secure: true)}";
+      var walletTag = "$username${Nonce.generate(7)}";
       //saving user credential in firestore
       await firestore.collection('users').doc(userCredential.user!.uid).set({
         'email': userCredential.user!.email,

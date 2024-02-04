@@ -7,9 +7,9 @@ import 'package:paylut/View/auth_screen.dart';
 import 'package:paylut/View/home_screen.dart';
 import 'package:paylut/View/onboarding.dart';
 import 'package:paylut/services/pref_helper.dart';
-import 'package:paylut/services/settings_provider.dart';
-import 'package:paylut/services/user_details_provider.dart';
 import 'package:provider/provider.dart';
+import 'ViewModels/settings_provider.dart';
+import 'ViewModels/user_details_provider.dart';
 import 'models/user_model.dart';
 
 void main() async{
@@ -40,10 +40,7 @@ class _MyAppState extends State<MyApp> {
   Future<Widget> userSignedIn() async{
     User? user = FirebaseAuth.instance.currentUser;
     DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
-
-    UserDetails userDetails = UserDetails.fromJson(userData);
-
-    return Home(userDetails: userDetails,);
+    return Home(userDetails: UserDetails.fromJson(userData),);
   }
 
   MaterialColor buildMaterialColor(Color color) {

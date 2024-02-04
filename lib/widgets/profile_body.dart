@@ -86,7 +86,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                   setState(() {
                     pressed = false;
                   });
-                  //GoogleSignIn googleSignIn = GoogleSignIn();
+                 // GoogleSignIn googleSignIn = GoogleSignIn();
                   GoogleSignIn().signOut();
                   FirebaseAuth.instance.signOut();
                   Navigator.pushReplacementNamed(context, '/authScreen');

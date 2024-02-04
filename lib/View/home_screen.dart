@@ -5,11 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:paylut/models/user_model.dart';
-import 'package:paylut/services/settings_provider.dart';
 import 'package:paylut/widgets/home_body.dart';
 import 'package:paylut/widgets/lut_body.dart';
 import 'package:paylut/widgets/profile_body.dart';
 import 'package:provider/provider.dart';
+import '../ViewModels/settings_provider.dart';
 import '../widgets/pay_body.dart';
 
 class Home extends StatefulWidget {
