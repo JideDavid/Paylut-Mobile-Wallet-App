@@ -40,10 +40,7 @@ class _MyAppState extends State<MyApp> {
   Future<Widget> userSignedIn() async{
     User? user = FirebaseAuth.instance.currentUser;
     DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
-
-    UserDetails userDetails = UserDetails.fromJson(userData);
-
-    return Home(userDetails: userDetails,);
+    return Home(userDetails: UserDetails.fromJson(userData),);
   }
 
   MaterialColor buildMaterialColor(Color color) {
